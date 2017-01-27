@@ -38,6 +38,7 @@ This table contains library users. It has theese columns:
 * Nome (text)
 * Cognome (text)
 * Dati (JSON containing additional infos)
+
 <!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 
 * Single client mode, no API
