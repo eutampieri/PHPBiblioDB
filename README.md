@@ -1,4 +1,39 @@
 # PHP BiblioDB
+
+##DataBase structure:
+
+The database consists in an SQLITE file containing four tables.
+
+###Libri
+
+This table contains books. It has these columns:
+* ISBN (text)
+* Titolo (text)
+* Autore (text)
+* Posizione (text)
+* Disponibilita (0:in prestito, 1:disponibile)
+* DataPrestito (YYYY-MM-DD)
+* Proprietario (text)
+
+###Utenti
+
+This table contains users. It has theese columns:
+* Utente (text)
+* Password (SHA-256 encoded)
+* Master (bool)
+###Sessioni
+This table contains sessions. It can be used for logging purposes. It has theese columns:
+* Token (text)
+* IP (text)
+* Scadenza (YYYY-MM-DD H:i:s)
+* Utente (text)
+###Iscritti
+This table contains library users. It has theese columns:
+* ID (text)
+* RFID (text)
+* Nome (text)
+* Cognome (text)
+* Dati (JSON containing additional infos)
 <!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 
 * Single client mode, no API
