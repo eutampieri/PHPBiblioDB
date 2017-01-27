@@ -1,5 +1,5 @@
 # BiblioDB
-*This software is written in Python and it manages book collections.*
+<!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 
 * Single client mode, no API
 * Server and clients mode, with API.
@@ -58,4 +58,4 @@ All of them are Python dictionaries packed into a JSON file.
 git clone https://github.com/eutampieri/BiblioDB.git
 cd BiblioDB
 python bibliodb_gui.pyw
-```
+```-->
