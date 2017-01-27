@@ -1,4 +1,4 @@
-# BiblioDB
+# PHP BiblioDB
 <!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 
 * Single client mode, no API
