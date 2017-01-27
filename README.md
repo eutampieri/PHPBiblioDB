@@ -21,13 +21,17 @@ This table contains users. It has theese columns:
 * Utente (text)
 * Password (SHA-256 encoded)
 * Master (bool)
+
 ###Sessioni
+
 This table contains sessions. It can be used for logging purposes. It has theese columns:
 * Token (text)
 * IP (text)
 * Scadenza (YYYY-MM-DD H:i:s)
 * Utente (text)
+
 ###Iscritti
+
 This table contains library users. It has theese columns:
 * ID (text)
 * RFID (text)
