@@ -1,0 +1,13 @@
+		
+		<div class="progressBar"><div class="bar" style="width:50%"></div><span class="percentage">50%</span></div>
+		<h1>Configura l'account amministratore</h1>
+		<a href="migration.php" data-role="button">Indietro</a> 
+		<form action="migration.php" method="POST">
+			<input type="hidden" name="mig" value="false">
+			<input type="hidden" name="stage" value="admin">
+			Nome utente: <input type="text" name="utente">
+			Password: <input id="pwd1" type="password" name="password">
+			Reimmetti la password: <input type="password" id="pwd2" onkeyup="check()">
+			<p id="mismatch" class="nascosto">Le password non corrispondono!</p>
+			<input id="pwdbtn" type="submit" value="Salva">
+		</form>
