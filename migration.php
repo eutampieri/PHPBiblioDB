@@ -184,7 +184,7 @@ else{
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
 			foreach($db[3] as $isbn=>$titolo){
-				$qry="INSERT INTO Libri VALUES :isbn,:titolo,:aut,:pos,:disp, :dp, :own)";
+				$qry="INSERT INTO Libri VALUES :isbn, :titolo, :aut, :pos, :disp, :dp, :own)";
 				$titolo=ucwords($titolo," \t\r\n\f\v.");
 				$aut=ucwords($db[4][$isbn]," \t\r\n\f\v.");
 				$pos=$db[1][$isbn];
