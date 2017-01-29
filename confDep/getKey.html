@@ -1,0 +1,18 @@
+		
+		<div class="progressBar"><div class="bar" style="width:40%"></div><span class="percentage">40%</span></div>
+		<h1>Chiave decodifica</h1>
+		<p>Il database principale contenente le informazioni sui libri è stato
+			importato correttamente. È possibile migrare anche le informazioni
+			relative agli iscritti e agli account di gestione.
+		<a href="migration.php" data-role="button">No, non voglio importare queste info</a> 
+		<h3>Ottenere la chiave di decodifica</h3>
+		Per proseguire è necessario eseguire questo comando nella cartella della
+		vecchia installazione di BiblioDB:
+		<code>./jsonvalidator.out>chiave.txt</code>
+		<h4>Caricare la chiave di decodifica</h4>
+		<form action="migration.php" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="mig" value="true">
+			<input type="hidden" name="stage" value="key">
+			Carica il file chiave.txt:<input type="file" name="key">
+			<input id="pwdbtn" type="submit" value="Carica">
+		</form>

@@ -201,9 +201,10 @@ else{
 				$stmt->bindParam(':disp',$disp);
 				$stmt->bindParam(':dp',$dp);
 				$stmt->execute();
-				echo $isbn.", ".$titolo.", ".$aut.", ".$pos.", ".$disp.", ".$dp.", ".$own."<br>\n";
+				//echo $isbn.", ".$titolo.", ".$aut.", ".$pos.", ".$disp.", ".$dp.", ".$own."<br>\n";
 			}
 			unlink("bibliodb.json");
+			echo file_get_contents("confDep/getKey.html");
 		}
 		?>
 		</div>
