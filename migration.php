@@ -191,9 +191,6 @@ else{
 				$pos=$db[1][$isbn];
 				$disp=$db[0][$isbn];
 				$dp=$db[8][$isbn];
-				if($dp==NULL){
-					$dp="1970-01-01 00:00:00";
-				}
 				$own=$db[6][$isbn];
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':isbn',$isbn);
