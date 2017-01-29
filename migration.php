@@ -179,7 +179,7 @@ else{
 		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="migMainDb"&&$_POST["mig"]=="true"){
 			makeDB();
-			$file_db = new PDO('sqlite:foto.sqlite');
+			$file_db = new PDO('sqlite:bibliodb.sqlite');
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
@@ -190,6 +190,9 @@ else{
 				$pos=$db[1][$isbn];
 				$disp=$db[0][$isbn];
 				$dp=$db[8][$isbn];
+				if($dp==NULL){
+					$dp="1970-01-01 00:00:00";
+				}
 				$own=$db[6][$isbn];
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':isbn',$isbn);
