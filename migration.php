@@ -163,6 +163,9 @@ else{
 		else if($_GET["mig"]=="false"){
 			echo file_get_contents("confDep/zero.html");
 		}
+		else if($_GET["mig"]=="true"){
+			echo file_get_contents("confDep/migMainDb.html");
+		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="admin"&&$_POST["mig"]=="false"){
 			makeDB();
 			$file_db = new PDO('sqlite:bibliodb.sqlite');
@@ -173,6 +176,33 @@ else{
 			$stmt->bindParam(':d',hash("sha256",$_POST["password"]));
 			$stmt->execute();
 			echo file_get_contents("confDep/fine.html");
+		}
+		else if(isset($_POST["stage"])&&$_POST["stage"]=="migMainDb"&&$_POST["mig"]=="true"){
+			makeDB();
+			$file_db = new PDO('sqlite:foto.sqlite');
+			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
+			$db=json_decode(file_get_contents("bibliodb.json"),true);
+			foreach($db[3] as $isbn=>$titolo){
+				$qry="INSERT INTO Libri VALUES :isbn,:titolo,:aut,:pos,:disp, :dp, :own)";
+				$titolo=ucwords($titolo," \t\r\n\f\v.");
+				$aut=ucwords($db[4][$isbn]," \t\r\n\f\v.");
+				$pos=$db[1][$isbn];
+				$disp=$db[0][$isbn];
+				$dp=$db[8][$isbn];
+				$own=$db[6][$isbn];
+				$stmt = $file_db->prepare($qry);
+				$stmt->bindParam(':isbn',$isbn);
+				$stmt->bindParam(':titolo',$titolo);
+				$stmt->bindParam(':own',$own);
+				$stmt->bindParam(':aut',$aut);
+				$stmt->bindParam(':pos',$pos);
+				$stmt->bindParam(':disp',$disp);
+				$stmt->bindParam(':dp',$dp);
+				$stmt->execute();
+				echo $isbn.", ".$titolo.", ".$aut.", ".$pos.", ".$disp.", ".$dp.", ".$own."<br>\n";
+			}
+			unlink("bibliodb.json");
 		}
 		?>
 		</div>
