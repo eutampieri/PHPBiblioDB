@@ -181,6 +181,7 @@ else{
 			makeDB();
 			$file_db = new PDO('sqlite:bibliodb.sqlite');
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			var_dump($_FILES);
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
 			foreach($db[3] as $isbn=>$titolo){
