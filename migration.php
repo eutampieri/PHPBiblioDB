@@ -38,6 +38,10 @@ if(!is_file("bibliodb.sqlite")||is_file("conf")){
 		copy("bibliodb.sqlite","bibliodb.dbold");
 	}
 }
+else{
+	header("Location: index.php");
+	die();
+}
 ?>
 <html>
 	<head>
