@@ -122,7 +122,7 @@ else{
 		if(!isset($_GET["mig"])&&!isset($_POST["mig"])){
 			echo file_get_contents("confDep/mig.html");
 		}
-		else if($_GET["mig"]=="true"&&_GET["stage"]=="fine"){
+		else if($_GET["mig"]=="true"&&$_GET["stage"]=="fine"){
 			echo file_get_contents("confDep/fine.html");
 			unlink("conf");
 		}
