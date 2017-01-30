@@ -207,11 +207,12 @@ else{
 			$iscritti=json_decode(file_get_contents("iscritti.json"))[1];
 			foreach ($iscritti as $id => $nome) {
 				$idIscritto=strval(uniqid("iscr"));
-				$qry="INSERT INTO Iscritti VALUES (:id, :rfid, :nome, \"\", ".$jsonAddData.")";
+				$qry="INSERT INTO Iscritti VALUES (:id, :rfid, :nome, \"\", :json)";
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':id',$idIscritto);
 				$stmt->bindParam(':rfid',$id);
 				$stmt->bindParam(':nome',$nome);
+				$stmt->bindParam(':json',$jsonAddData);
 				$stmt->execute();
 			}
 			echo "</ul>";
