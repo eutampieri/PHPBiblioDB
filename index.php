@@ -221,6 +221,7 @@ if(!is_file("bibliodb.sqlite")){
 					$stmt = $file_db->prepare($qry);
 					$stmt->execute();
 					$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+					var_dump($libri);
 					if(!isset($_GET['mode'])){
 						echo "			<table>
 				<tr>
