@@ -122,13 +122,18 @@ if(!is_file("bibliodb.sqlite")){
 						$headers = get_headers($domain1);
 						return substr($headers[0], 9, 3);
 					}
-					function statoLibro($isbn,$dict){
-						if(isset($dict[0][$isbn])){
-							if($dict[0][$isbn]==1){
+					function dataIT($data){
+						$data=split(" ",$data)[0];
+						$data=split("-",$data);
+						return $data[2]."/".$data[1]."/".$data[0];
+					}
+					function statoLibro($stato,$data){
+						if($stato!=NULL){
+							if($stato){
 								return "Disponibile";
 							}
 							else{
-								return "Prestato in data ".$dict[8][$isbn];
+								return "Prestato in data ".dataIT($data);
 							}
 						}
 						else{
@@ -216,54 +221,33 @@ if(!is_file("bibliodb.sqlite")){
 						}
 					}
 					$file_db = new PDO('sqlite:bibliodb.sqlite');
-					$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-					$qry='SELECT * FROM Libri LIMIT 10';
-					$stmt = $file_db->prepare($qry);
-					$stmt->execute();
-					$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
-					var_dump($libri);
 					if(!isset($_GET['mode'])){
+						$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						$qry='SELECT * FROM Libri LIMIT 10';
+						$stmt = $file_db->prepare($qry);
+						$stmt->execute();
+						$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 						echo "			<table>
 				<tr>
 ";
-						if($_GET['debug']=="true"){
-							ini_set("precision", 5);
-							$time=intval(microtime(true));
-							$csv="ISBN,begin,this\n";
-							$uuid=uniqid();
-						}
-						$brk=0;
-						foreach ($libri[1] as $key => $value) {
-							if($_GET['debug']=="true"){
-								$ptime=microtime(true);
-							}
+						foreach ($libri as $libro) {
 							echo "<td><img src=\"";
 							echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
 							echo "\"></td><td>";
 							echo "ISBN: ";
-							echo $key;
+							echo $libro["ISBN"];
 							echo "<br>Titolo: ";
-							echo ucwords($libri[3][$key]);
+							echo  $libro["Titolo"];
 							echo "</br>Autore: ";
-							echo ucwords($libri[4][$key]);
+							echo  $libro["Autore"];
 							echo "</br>Posizione: ";
-							echo $value;
-							echo "<br>Stato: ".statoLibro($key,$libri);
-							if($_GET['debug']=="true"){
-								$csv=$csv.$key.",".strval(microtime(true)-$time).",".strval(microtime(true)-$ptime)."\n";
-							}
+							echo $libro["Posizione"];
+							echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
 				#echo "<br>Tempo: ".strval((intval(microtime(true)/1000)/1000)-$time)."s, +".strval(microtime(true)-$ptime);
 							echo "</td></tr>\n";
-							$brk=$brk+1;
-							if($brk>20){
-								break;
-							}
+
 						}
-						file_put_contents('/var/www/html/dbgcl/'.$uuid.".csv", $csv);
 						echo "</table>";
-						if($_GET['debug']=="true"){
-							echo '<a href="getdbg.php?id='.$uuid.'">Scarica i dati di debug</a>';
-						}
 						echo '<a href="?mode=all">Mostra la lista completa (Pu&ograve; richiedere molto tempo...)</a>'."\n";
 					}
 					else{
