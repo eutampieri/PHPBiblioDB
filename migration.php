@@ -33,60 +33,11 @@ function SQLdate($date){
 }
 //Controllo database valido. Se si, die(), altriment migrazione
 //
-/*include('tokenizr.php');
-$key=exec('./jsonvalidator.out');
-$data=base64_decode(file_get_contents('bibliodb-utenti.json'));
-$utenti = json_decode(trim(mcrypt_decrypt('rijndael-128', $key, $data, 'ecb'),'{'),true);
-if(isset($_POST['user'])&&isset($_POST['password'])){
-	if(isset($utenti[0][$_POST['user']])){
-	if($utenti[2][$_POST['user']]=="admin"){
-		if($utenti[0][$_POST['user']]==$_POST['password']){
-		$token=setToken($_POST["user"],$_POST["password"],800);
-		setcookie("token",$token, time()+860);
-		header("Location: mgr.php");
-		}
-		else{
-		header("Location: index.php?error=Password+errata&mode=login");
-		}
-	}
-	else{
-		header("Location: index.php?error=Utente+non+autorizzato&mode=login");
-	}
-	}
-	else{
-	header("Location: index.php?error=Utente+inesistente&mode=login");
-	}
-	die();
-}
-if(isset($_GET['js'])&&$_GET['js']=='true'){
-	sleep(5);
-	header("Location: mgr.php");
-	die();
-}
-$loggedIn=false;
-if(isset($_COOKIE['token'])){
-	$u=getToken($_COOKIE['token'])['user'];
-	$p=getToken($_COOKIE['token'])['pwd'];
-	if(isset($utenti[0][$u])){
-	if($utenti[2][$u]=="admin"){
-		if($utenti[0][$u]==$p){
-		$loggedIn=true;
-		}
-		else{
-		header("Location: index.php?error=Password+errata&mode=login");
-		}
-	}
-	else{
-		header("Location: index.php?error=Utente+non+autorizzato&mode=login");
-	}
-	}
-	else{
-	header("Location: index.php?error=Utente+inesistente&mode=login");
+if(!is_file("bibliodb.sqlite")||is_file("conf")){
+	if(is_file("conf")&&is_file("bibliodb.sqlite")){
+		copy("bibliodb.sqlite","bibliodb.dbold");
 	}
 }
-else{
-	header("Location: index.php#login");
-}*/
 ?>
 <html>
 	<head>
@@ -167,14 +118,15 @@ else{
 		if(!isset($_GET["mig"])&&!isset($_POST["mig"])){
 			echo file_get_contents("confDep/mig.html");
 		}
+		else if($_GET["mig"]=="true"&&_GET["stage"]=="fine"){
+			echo file_get_contents("confDep/fine.html");
+			unlink("conf");
+		}
 		else if($_GET["mig"]=="false"){
 			echo file_get_contents("confDep/zero.html");
 		}
 		else if($_GET["mig"]=="true"){
 			echo file_get_contents("confDep/migMainDb.html");
-		}
-		else if($_GET["mig"]=="true"&&_GET["stage"]=="fine"){
-			echo file_get_contents("confDep/fine.html");
 		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="admin"&&$_POST["mig"]=="false"){
 			makeDB();
@@ -189,6 +141,7 @@ else{
 		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="migMainDb"&&$_POST["mig"]=="true"){
 			makeDB();
+			file_put_contents("conf","");
 			$file_db = new PDO('sqlite:bibliodb.sqlite');
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
@@ -261,17 +214,6 @@ else{
 			echo '<a href="migration.php?mig=true&stage=fine" data-role="button">Fine</a>';
 		}
 		?>
-		</div>
-		<div data-role="footer" data-position="fixed">  
-		<div data-role="navbar" data-iconpos="top" data-theme="a">
-			<ul>
-			<li>
-				<a  href="index.php?mode=pos" data-transition="fade" data-theme="" data-icon="info">
-				Lista Pos.
-				</a>
-			</li>
-			</ul>
-		</div>
 		</div>
 	</div>
 	</body>
