@@ -200,7 +200,7 @@ if(!is_file("bibliodb.sqlite")||is_file("conf")){
 				$stmt->execute();
 			}
 			$jsonAddData=json_encode(["note"=>"Importato da BiblioDB","stato"=>"Azione aggiuntiva richiesta","code"=>500]);
-			$iscritti=json_decode(file_get_contents("tessere.json"))[1];
+			$iscritti=json_decode(file_get_contents("iscritti.json"))[1];
 			foreach ($iscritti as $id => $nome) {
 				$idIscritto=strval(uniqid("iscr"));
 				$qry="INSERT INTO Iscritti VALUES (:id, :rfid, :nome, \"\", ".$jsonAddData.")";
