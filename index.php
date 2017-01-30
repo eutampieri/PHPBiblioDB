@@ -253,25 +253,29 @@ if(!is_file("bibliodb.sqlite")){
 					else{
 						switch ($_GET['mode']) {
 							case 'all':
-									foreach ($libri[1] as $key => $value) {
-										echo "			<table>
-				<tr>
-";
-										echo "<td><img src=\"";
-										echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
-										echo "\"></td><td>";
-										echo "ISBN: ";
-										echo $key;
-										echo "<br>Titolo: ";
-										echo ucwords($libri[3][$key]);
-										echo "</br>Autore: ";
-										echo ucwords($libri[4][$key]);
-										echo "</br>Posizione: ";
-										echo $value;
-										echo "<br>Stato: ".statoLibro($key,$libri);
-							#echo "<br>Tempo: ".strval((intval(microtime(true)/1000)/1000)-$time)."s, +".strval(microtime(true)-$ptime);
-										echo "</td></tr>\n";
-									}
+								$qry='SELECT * FROM Libri';
+								$stmt = $file_db->prepare($qry);
+								$stmt->execute();
+								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+								echo "			<table>
+						<tr>
+		";
+								foreach ($libri as $libro) {
+									echo "<td><img src=\"";
+									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
+								}
+								echo "</table>";
 									break;
 							case 'titolo':
 							echo "<table>";
