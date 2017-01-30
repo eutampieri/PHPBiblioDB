@@ -215,6 +215,8 @@ else{
 				$stmt->bindParam(':json',$jsonAddData);
 				$stmt->execute();
 			}
+			unlink("iscritti.json");
+			unlink("bibliodb-utenti.json");
 			echo "</ul>";
 			echo '<a href="migration.php?mig=true&stage=fine" data-role="button">Fine</a>';
 		}
