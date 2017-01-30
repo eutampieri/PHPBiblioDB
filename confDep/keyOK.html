@@ -1,0 +1,11 @@
+		
+		<div class="progressBar"><div class="bar" style="width:60%"></div><span class="percentage">60%</span></div>
+		<h1>Chiave ricevuta</h1>
+		La chiave è stata ricevuta. È possibile caricare gli altri file.
+		<form action="migration.php" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="mig" value="true">
+			<input type="hidden" name="stage" value="dbs">
+			Carica il file bibloidb-utenti.json:<input type="file" name="users">
+			Carica il file tessere.json:<input type="file" name="iscritti">
+			<input type="submit" value="Carica">
+		</form>

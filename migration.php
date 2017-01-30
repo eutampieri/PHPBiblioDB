@@ -24,6 +24,13 @@ function makeDB(){
 	$stmt->execute();
 	$file_db=NULL;
 }
+function SQLdate($date){
+	$date=split("/",$date);
+	$a=$date[2];
+	$m=$date[1];
+	$g=$date[0];
+	return $a.'-'.$m.'-'.$g.' 00:00:00';
+}
 //Controllo database valido. Se si, die(), altriment migrazione
 //
 /*include('tokenizr.php');
@@ -166,6 +173,9 @@ else{
 		else if($_GET["mig"]=="true"){
 			echo file_get_contents("confDep/migMainDb.html");
 		}
+		else if($_GET["mig"]=="true"&&_GET["stage"]=="fine"){
+			echo file_get_contents("confDep/fine.html");
+		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="admin"&&$_POST["mig"]=="false"){
 			makeDB();
 			$file_db = new PDO('sqlite:bibliodb.sqlite');
@@ -181,7 +191,6 @@ else{
 			makeDB();
 			$file_db = new PDO('sqlite:bibliodb.sqlite');
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			var_dump($_FILES);
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
 			foreach($db[3] as $isbn=>$titolo){
@@ -191,6 +200,9 @@ else{
 				$pos=$db[1][$isbn];
 				$disp=$db[0][$isbn];
 				$dp=$db[8][$isbn];
+				if($dp!=null){
+					$dp=SQLdate($dp);
+				}
 				$own=$db[6][$isbn];
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':isbn',$isbn);
@@ -206,6 +218,48 @@ else{
 			unlink("bibliodb.json");
 			echo file_get_contents("confDep/getKey.html");
 		}
+		else if(isset($_POST["stage"])&&$_POST["stage"]=="key"&&$_POST["mig"]=="true"){
+			move_uploaded_file($_FILES["key"]["tmp_name"], "key.txt");
+			echo file_get_contents("confDep/keyOK.html");
+		}
+		else if(isset($_POST["stage"])&&$_POST["stage"]=="dbs"&&$_POST["mig"]=="true"){
+			move_uploaded_file($_FILES["users"]["tmp_name"], "bibliodb-utenti.json");
+			move_uploaded_file($_FILES["iscritti"]["tmp_name"], "iscritti.json");
+			$file_db = new PDO('sqlite:bibliodb.sqlite');
+			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$key=file_get_contents("key.txt");
+			unlink("key.txt");
+			$data=base64_decode(file_get_contents('bibliodb-utenti.json'));
+			$utenti = json_decode(trim(mcrypt_decrypt('rijndael-128', $key, $data, 'ecb'),'{'),true);
+			echo file_get_contents("confDep/dbs.html");
+			foreach ($utenti[0] as $user => $pwd) {
+				$master=false;
+				if($utenti[2][$user]=="admin"){
+					echo "<li>".$user."</li>\n";
+					$master=true;
+				}
+				$pwhash=hash("sha256",$password);
+				$qry="INSERT INTO Utenti VALUES (:user, :pwhash, :master)";
+				$stmt = $file_db->prepare($qry);
+				$stmt->bindParam(':user',$user);
+				$stmt->bindParam(':pwhash',$pwhash);
+				$stmt->bindParam(':master',$master);
+				$stmt->execute();
+			}
+			$jsonAddData=json_encode(["note"=>"Importato da BiblioDB","stato"=>"Azione aggiuntiva richiesta","code"=>500]);
+			$iscritti=json_decode(file_get_contents("tessere.json"))[1];
+			foreach ($iscritti as $id => $nome) {
+				$idIscritto=strval(uniqid("iscr"));
+				$qry="INSERT INTO Iscritti VALUES (:id, :rfid, :nome, \"\", ".$jsonAddData.")";
+				$stmt = $file_db->prepare($qry);
+				$stmt->bindParam(':id',$idIscritto);
+				$stmt->bindParam(':rfid',$id);
+				$stmt->bindParam(':nome',$nome);
+				$stmt->execute();
+			}
+			echo "</ul>";
+			echo '<a href="migration.php?mig=true&stage=fine" data-role="button">Fine</a>';
+		}
 		?>
 		</div>
 		<div data-role="footer" data-position="fixed">  
@@ -216,7 +270,6 @@ else{
 				Lista Pos.
 				</a>
 			</li>
-
 			</ul>
 		</div>
 		</div>
