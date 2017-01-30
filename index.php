@@ -1,3 +1,9 @@
+<?php
+if(!is_file("bibliodb.sqlite")){
+	header("Location: migration.php");
+	die();
+}
+?>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -209,7 +215,12 @@
 							}
 						}
 					}
-					$libri=json_decode(file_get_contents("bibliodb.json"),true);
+					$file_db = new PDO('sqlite:bibliodb.sqlite');
+					$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					$qry='SELECT * FROM Libri';
+					$stmt = $file_db->prepare($qry);
+					$stmt->execute();
+					$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 					if(!isset($_GET['mode'])){
 						echo "			<table>
 				<tr>
