@@ -10,7 +10,7 @@
 function makeDB(){
 	$file_db = new PDO('sqlite:bibliodb.sqlite');
 	$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$qry='CREATE  TABLE "Libri" ("ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT, "Posizione" TEXT, "Disponibilita" INTEGER, "DataPrestito" DATETIME, "Proprietario" TEXT)';
+	$qry='CREATE  TABLE "Libri" ("ID" TEXT, "ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT, "Posizione" TEXT, "Disponibilita" INTEGER, "DataPrestito" DATETIME, "Proprietario" TEXT)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
 	$qry='CREATE  TABLE "Utenti" ("Utente" TEXT, "Password" TEXT, "Master" BOOL)';
@@ -151,7 +151,7 @@ else{
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
 			foreach($db[3] as $isbn=>$titolo){
-				$qry="INSERT INTO Libri VALUES (:isbn, :titolo, :aut, :pos, :disp, :dp, :own)";
+				$qry="INSERT INTO Libri VALUES (:id, :isbn, :titolo, :aut, :pos, :disp, :dp, :own)";
 				$titolo=ucwords($titolo," \t\r\n\f\v.");
 				$aut=ucwords($db[4][$isbn]," \t\r\n\f\v.");
 				$pos=$db[1][$isbn];
@@ -162,6 +162,7 @@ else{
 				}
 				$own=$db[6][$isbn];
 				$stmt = $file_db->prepare($qry);
+				$stmt->bindParam(':id',strval(uniqid("libro")));
 				$stmt->bindParam(':isbn',$isbn);
 				$stmt->bindParam(':titolo',$titolo);
 				$stmt->bindParam(':own',$own);
