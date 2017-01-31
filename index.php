@@ -303,20 +303,27 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'autore':
+							$qry='SELECT * FROM Libri WHERE Autore LIKE :q';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->bindParam(':q',$ricerca);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							echo "<table>";
-							foreach($libri[4] as $isbn=>$autore){
-								if(strpos($autore,strtolower($_GET[q]))!==false){
-									echo"<tr><td><img src=\"";
-									echo gbooks($isbn,"copertina",urlencode(ucwords($libri[3][$isbn])),urlencode(ucwords($autore)));
-									echo "\"></td><td>Titolo: ";
-									echo ucwords($libri[3][$isbn]);
-									echo "<br>Autore: ";
-									echo ucwords($autore);
-									echo "<br>ISBN: ".$isbn;
-									echo "<br>Posizione: ".$libri[1][$isbn];
-									echo "<br>Stato: ".statoLibro($isbn, $libri);
-									echo "</td></tr>";
-								}
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
 							}
 							echo "</table>";
 							break;
@@ -327,55 +334,79 @@ if(!is_file("bibliodb.sqlite")){
 							if(isset($_GET['ean'])){
 								$isbns=$_GET["ean"];
 							}
-							echo "<table>\n<tr>\n<td><img src=\"";
-							echo gbooks($isbns,"copertina",urlencode(ucwords($libri[3][$isbns])),urlencode(ucwords($libri[4][$isbns])));
-							echo "\"></td><td>Titolo: ";
-							echo ucwords($libri[3][$isbns]);
-							echo "<br>Autore: ";
-							echo ucwords($libri[4][$isbns]);
-							echo "<br>Posizione: ";
-							echo $libri[1][$isbns];
-							echo "<br>Stato: ".statoLibro($isbns,$libri);
+							$qry='SELECT * FROM Libri WHERE ISBN = :q';
+							$stmt = $file_db->prepare($qry);
+							$stmt->bindParam(':q',$isbns);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+							echo "<table>";
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
+							}
+							echo "</table>";
 							break;
 							case 'posizione':
+							$qry='SELECT * FROM Libri WHERE Posizione = :q';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->bindParam(':q',$ricerca);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							echo "<table>";
-							foreach ($libri[1] as $isbn=>$pos){
-								if(strtolower($_GET["q"])==strtolower($pos)){
-									echo "<tr>";
-									echo "<td>";
-									echo "<img src=\"";
-									echo gbooks($isbn, "copertina",urlencode(ucwords($libri[3][$isbn])),urlencode(ucwords($libri[4][$isbn])));
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
 									echo "\"></td><td>";
-									echo "Titolo: ";
-									echo ucwords($libri[3][$isbn]);
-									echo "<br>Autore: ".ucwords($libri[4][$isbn]);
-									echo "<br>ISBN: ".$isbn;
-									echo "<br>Stato: ".statoLibro($isbn,$libri);;
-								}
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
 							}
 							echo "</table>";
 							break;
 							case 'pos':
-							$scatole=array();
-							foreach ($libri[1] as $key => $value){
-								$scatole[$value]=[];
-							}
-							foreach ($libri[1] as $key => $value) {
-								array_push($scatole[$value], $key);
-							}
-							foreach ($scatole as $s => $arr){
+							$qry='SELECT DISTINCT Posizione FROM Libri';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->execute();
+							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+							foreach ($scatole as $s){
 								echo "<div data-role=\"collapsible\"><h2>".$s."</h2><table>";
-								for($i=0;$i<count($arr);$i++){
+								$qry='SELECT * FROM Libri WHERE Posizione = :q';
+								$stmt = $file_db->prepare($qry);
+								$ricerca="%".$_GET['q']."%";
+								$stmt->bindParam(':q',$ricerca);
+								$stmt->execute();
+								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+								foreach($libri as $libro){
 									echo "<tr><td><img src=\"";
-									echo gbooks($arr[$i],"copertina",urlencode(ucwords($libri[3][$arr[$i]])),urlencode(ucwords($libri[4][$arr[$i]])));
+									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
 									echo '"></td><td>';
 									echo "ISBN: ";
-									echo $arr[$i];
+									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
-									echo ucwords($libri[3][$arr[$i]]);
+									echo $libro["Titolo"];
 									echo "</br>Autore: ";
-									echo ucwords($libri[4][$arr[$i]]);
-									echo "<br>Stato: ".statoLibro($arr[$i],$libri);
+									echo $libro["Autore"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
 									echo "</td></tr>\n";
 								}
 								echo "</table></div>";}
