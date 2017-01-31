@@ -389,11 +389,10 @@ if(!is_file("bibliodb.sqlite")){
 							$stmt->execute();
 							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							foreach ($scatole as $s){
-								echo "<div data-role=\"collapsible\"><h2>".$s."</h2><table>";
+								echo "<div data-role=\"collapsible\"><h2>".$s["Posizione"]."</h2><table>";
 								$qry='SELECT * FROM Libri WHERE Posizione = :q';
 								$stmt = $file_db->prepare($qry);
-								$ricerca="%".$_GET['q']."%";
-								$stmt->bindParam(':q',$ricerca);
+								$stmt->bindParam(':q',$s["Posizione"]);
 								$stmt->execute();
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 								foreach($libri as $libro){
