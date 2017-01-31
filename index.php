@@ -141,8 +141,8 @@ if(!is_file("bibliodb.sqlite")){
 						}
 					}
 					function gbooks($isbn, $mode,$tit,$aut){
-						$cache=json_decode(file_get_contents("pub/covers.json"),true);
-						if(isset($cache[$isbn])){
+						$cache=json_decode(file_get_contents("covers.json"),true);
+						if(isset($cache[$isbn])&&$mode=="copertina"){
 							return $cache[$isbn];
 						}
 						else{
@@ -169,17 +169,17 @@ if(!is_file("bibliodb.sqlite")){
 											return $txturl;
 											if(get_http_response_code($txturl) != "200"){
 												$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-												file_put_contents("pub/covers.json", json_encode($cache));
+												file_put_contents("covers.json", json_encode($cache));
 												return"res/mimg.php?tit=".$tit."&aut=".$aut;
 											}
 											else{
 												$cache[$isbn]=$txturl;
-												file_put_contents("pub/covers.json", json_encode($cache));
+												file_put_contents("covers.json", json_encode($cache));
 												return($txturl);
 											}
 										}
 										$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-										file_put_contents("pub/covers.json", json_encode($cache));
+										file_put_contents("covers.json", json_encode($cache));
 										return"res/mimg.php?tit=".$tit."&aut=".$aut;
 									}
 									else{
@@ -198,18 +198,18 @@ if(!is_file("bibliodb.sqlite")){
 											$sb=exec('python sbcover.py '.$isbn);
 											if(get_http_response_code($sb)!=200){
 												$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-												file_put_contents("pub/covers.json", json_encode($cache));
+												file_put_contents("covers.json", json_encode($cache));
 												return"res/mimg.php?tit=".$tit."&aut=".$aut;
 											}
 											else{
 												$cache[$isbn]=$sb;
-												file_put_contents("pub/covers.json", json_encode($cache));
+												file_put_contents("covers.json", json_encode($cache));
 												return $sb;
 											}
 										}
 										else{
 											$cache[$isbn]=$txturl;
-											file_put_contents("pub/covers.json", json_encode($cache));
+											file_put_contents("covers.json", json_encode($cache));
 											return ($txturl);
 										}
 									}
