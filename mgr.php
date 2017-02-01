@@ -8,7 +8,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     $stmt->execute();
     $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
     var_dump(count($utenti));
-    die();
+    die();/*
     if(UTENTE_ESISTENTE){
         if(AMMINISTRATORE){
             if(PASSWORD_OK){
@@ -52,7 +52,7 @@ if(isset($_COOKIE['token'])){
 }
 else{
     header("Location: index.php#login");
-}
+}*/
 ?>
 <html>
     <head>
