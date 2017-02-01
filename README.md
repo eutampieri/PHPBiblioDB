@@ -39,6 +39,13 @@ This table contains library users. It has theese columns:
 * Cognome (text)
 * Dati (JSON containing additional infos)
 
+##Caching
+To save time and load covers quickly, create a file named `covers.json` in the
+folder in wich is contained `index.php` with the following content:
+```
+{}
+```
+
 <!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 
 * Single client mode, no API

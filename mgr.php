@@ -1,53 +1,53 @@
 <?php
-include('tokenizr.php');
-$key=exec('./jsonvalidator.out');
-$data=base64_decode(file_get_contents('bibliodb-utenti.json'));
-$utenti = json_decode(trim(mcrypt_decrypt('rijndael-128', $key, $data, 'ecb'),'{'),true);
 if(isset($_POST['user'])&&isset($_POST['password'])){
-    if(isset($utenti[0][$_POST['user']])){
-    if($utenti[2][$_POST['user']]=="admin"){
-        if($utenti[0][$_POST['user']]==$_POST['password']){
-        $token=setToken($_POST["user"],$_POST["password"],800);
-        setcookie("token",$token, time()+860);
-        header("Location: mgr.php");
+    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $qry='SELECT * FROM Utenti WHERE Utente = :u';
+    $stmt = $database->prepare($qry);
+    $stmt->bindParam(':u',$_POST["user"]);
+    $stmt->execute();
+    $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    var_dump(count($utenti));
+    die();
+    if(UTENTE_ESISTENTE){
+        if(AMMINISTRATORE){
+            if(PASSWORD_OK){
+                $token=setToken($_POST["user"],$_POST["password"],800);
+                setcookie("token",$token, time()+860);
+                header("Location: mgr.php");
+            }
+            else{
+                header("Location: index.php?error=Password+errata&mode=login");
+            }
         }
         else{
-        header("Location: index.php?error=Password+errata&mode=login");
+            header("Location: index.php?error=Utente+non+autorizzato&mode=login");
         }
     }
     else{
-        header("Location: index.php?error=Utente+non+autorizzato&mode=login");
+        header("Location: index.php?error=Utente+inesistente&mode=login");
     }
-    }
-    else{
-    header("Location: index.php?error=Utente+inesistente&mode=login");
-    }
-    die();
-}
-if(isset($_GET['js'])&&$_GET['js']=='true'){
-    sleep(5);
-    header("Location: mgr.php");
     die();
 }
 $loggedIn=false;
 if(isset($_COOKIE['token'])){
     $u=getToken($_COOKIE['token'])['user'];
     $p=getToken($_COOKIE['token'])['pwd'];
-    if(isset($utenti[0][$u])){
-    if($utenti[2][$u]=="admin"){
-        if($utenti[0][$u]==$p){
-        $loggedIn=true;
+    if(UTENTE_ESISTENTE){
+        if(AMMINISTRATORE){
+            if(PASSWORD_OK){
+                $loggedIn=true;
+            }
+            else{
+                header("Location: index.php?error=Password+errata&mode=login");
+            }
         }
         else{
-        header("Location: index.php?error=Password+errata&mode=login");
+            header("Location: index.php?error=Utente+non+autorizzato&mode=login");
         }
     }
     else{
-        header("Location: index.php?error=Utente+non+autorizzato&mode=login");
-    }
-    }
-    else{
-    header("Location: index.php?error=Utente+inesistente&mode=login");
+        header("Location: index.php?error=Utente+inesistente&mode=login");
     }
 }
 else{
