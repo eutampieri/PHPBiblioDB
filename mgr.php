@@ -10,7 +10,17 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     if(count($utenti)==1){
         if($utenti[0]["Master"]=="1"){
             if(password_verify($_POST["password"],$utenti[0]["Password"])){
-                $token=setToken($_POST["user"],$_POST["password"],800);
+                $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$qry='INSERT INTO Sessioni VALUES (:token, :ip, :scadenza, :utente)';
+                $token=strval(uniqid("sess"));
+                $scadenza=date("Y-m-d H:i:s",time()+860);
+                $ip=$_SERVER['REMOTE_ADDR'];
+				$stmt = $file_db->prepare($qry);
+                $stmt->bindParam(':token',$token);
+                $stmt->bindParam(':ip',$ip);
+                $stmt->scadenza(':scadenzaq',$scadenza);
+                $stmt->bindParam(':utente',$_POST["user"]);
+				$stmt->execute();
                 setcookie("token",$token, time()+860);
                 header("Location: mgr.php");
             }
