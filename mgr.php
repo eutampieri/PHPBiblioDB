@@ -313,25 +313,31 @@ else{
                     <input type="submit" value="Sposta"></form>';
                 if(isset($_POST['s'])&&isset($_POST['d'])){
                 echo "<table>";
-                foreach ($libri[1] as $key => $value) {
-                    if($value==$_POST['s']){
+                $qry='UPDATE Libri SET Posizione = :d WHERE Posizione=:s';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$POST['d']);
+                $stmt->bindParam(':s',$POST['s']);
+                $stmt->execute();
+                $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$POST['d']);
+                $stmt->execute();
+                $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($libriSpostati as $libro) {
                     echo "<td><img src=\"";
-                    echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
+                    echo gbooks($key,"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
                     echo '"></td><td>';
                     echo "ISBN: ";
-                    echo $key;
+                    echo $libro["ISBN"];
                     echo "<br>Titolo: ";
-                    echo ucwords($libri[3][$key]);
+                    echo $libro["Titolo"];
                     echo "</br>Autore: ";
-                    echo ucwords($libri[4][$key]);
-                    echo "<br>Posizione: ".$value;
-                    echo "<br>Nuova posizione: ".$_POST['d'];
-                    $libri[1][$key]=$_POST['d'];
+                    echo $libro["Autore"];
+                    echo "<br>Posizione: ".$POST['s'];
+                    echo "<br>Nuova posizione: ".$libro["Posizione"];
                     echo "</td></tr>\n";
-                    }
                 }
                 echo "</table>";
-                file_put_contents('bibliodb.json',json_encode($libri));
                 }
                 break;
             case 'add':
