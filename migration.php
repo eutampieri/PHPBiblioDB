@@ -196,7 +196,7 @@ else{
 					echo "<li>".$user."</li>\n";
 					$master=true;
 				}
-				$pwhash=password_hash($password, PASSWORD_DEFAULT);
+				$pwhash=password_hash($pwd, PASSWORD_DEFAULT);
 				$qry="INSERT INTO Utenti VALUES (:user, :pwhash, :master)";
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':user',$user);
