@@ -139,7 +139,7 @@ else{
 			$qry="INSERT INTO Utenti VALUES (:i,:d,1)";
 			$stmt = $file_db->prepare($qry);
 			$stmt->bindParam(':i',$_POST["utente"]);
-			$stmt->bindParam(':d',hash("sha256",$_POST["password"]));
+			$stmt->bindParam(':d',password_hash($_POST["password"], PASSWORD_DEFAULT));
 			$stmt->execute();
 			echo file_get_contents("confDep/fine.html");
 		}
@@ -196,7 +196,7 @@ else{
 					echo "<li>".$user."</li>\n";
 					$master=true;
 				}
-				$pwhash=hash("sha256",$password);
+				$pwhash=password_hash($password, PASSWORD_DEFAULT);
 				$qry="INSERT INTO Utenti VALUES (:user, :pwhash, :master)";
 				$stmt = $file_db->prepare($qry);
 				$stmt->bindParam(':user',$user);

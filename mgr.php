@@ -9,7 +9,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
     if(count($utenti)==1){
         if($utenti[0]["Master"]=="1"){
-            if(hash("sha256",$_POST["password"])==$utenti[0]["Password"]){
+            if(password_verify($_POST["password"],$utenti[0]["Password"])){
                 $token=setToken($_POST["user"],$_POST["password"],800);
                 setcookie("token",$token, time()+860);
                 header("Location: mgr.php");
