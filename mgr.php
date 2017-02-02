@@ -35,31 +35,42 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
         header("Location: index.php?error=Utente+inesistente&mode=login");
     }
     die();
-}/*
+}
 $loggedIn=false;
 if(isset($_COOKIE['token'])){
-    $u=getToken($_COOKIE['token'])['user'];
-    $p=getToken($_COOKIE['token'])['pwd'];
-    if(UTENTE_ESISTENTE){
-        if(AMMINISTRATORE){
-            if(PASSWORD_OK){
+    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $qry='SELECT * FROM Sessioni WHERE Token = :tk';
+    $stmt = $database->prepare($qry);
+    $stmt->bindParam(':tk',$_COOKIE['token']);
+    $stmt->execute();
+    $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+    if(date_timestamp_get(date_create_from_format("Y-m-d H:i:s",$sess["Scadenza"]))>time()){
+        $qry='SELECT * FROM Sessioni WHERE Utente = :u';
+        $stmt = $database->prepare($qry);
+        $stmt->bindParam(':u',$sess["Utente"]);
+        $stmt->execute();
+        $role=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Master"];
+        if($role=="1"){
+            if($_SERVER['REMOTE_ADDR']==$sess["IP"]){
                 $loggedIn=true;
+                //Prolungare la durata della sessione
             }
             else{
-                header("Location: index.php?error=Password+errata&mode=login");
+                header("Location: index.php?error=Login+fallito&mode=login");
             }
         }
         else{
-            header("Location: index.php?error=Utente+non+autorizzato&mode=login");
+            header("Location: index.php?error=Non+autorizzato&mode=login");
         }
     }
     else{
-        header("Location: index.php?error=Utente+inesistente&mode=login");
-    }
+        header("Location: index.php?error=Sessione+scaduta&mode=login");
+    }*/
 }
 else{
     header("Location: index.php#login");
-}*/
+}
 ?>
 <html>
     <head>
