@@ -232,7 +232,7 @@ if(!is_file("bibliodb.sqlite")){
 ";
 						foreach ($libri as $libro) {
 							echo "<td><img src=\"";
-							echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+							echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 							echo "\"></td><td>";
 							echo "ISBN: ";
 							echo $libro["ISBN"];
