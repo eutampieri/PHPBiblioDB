@@ -82,11 +82,11 @@ else{
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
     <script src="js/jquery-1.11.1.min.js"></script>
-    <!--script type="text/javascript">
+    <script type="text/javascript">
      $(document).bind("mobileinit", function () {
          $.mobile.ajaxEnabled = false;
      });
-    </script-->
+    </script>
     <script src="js/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/sha512.js"></script>
     <script src="js/bibliodb.js"></script>
