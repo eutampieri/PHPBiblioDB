@@ -315,31 +315,32 @@ else{
                     <input type="submit" value="Sposta"></form>';
                 if(isset($_POST['s'])&&isset($_POST['d'])){
                     error_log("Hey!");
-                echo "<table>";
-                $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
-                $stmt = $database->prepare($qry);
-                $stmt->bindParam(':d',$POST['d']);
-                $stmt->bindParam(':s',$POST['s']);
-                $stmt->execute();
-                $qry='SELECT * FROM Libri WHERE Posizione=:d';
-                $stmt = $database->prepare($qry);
-                $stmt->bindParam(':d',$POST['d']);
-                $stmt->execute();
-                $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($libriSpostati as $libro) {
-                    echo "<td><img src=\"";
-                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
-                    echo '"></td><td>';
-                    echo "ISBN: ";
-                    echo $libro["ISBN"];
-                    echo "<br>Titolo: ";
-                    echo $libro["Titolo"];
-                    echo "</br>Autore: ";
-                    echo $libro["Autore"];
-                    echo "<br>Posizione: ".$POST['s'];
-                    echo "<br>Nuova posizione: ".$libro["Posizione"];
-                    echo "</td></tr>\n";
-                }
+                    echo "<table>";
+                    $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$POST['d']);
+                    $stmt->bindParam(':s',$POST['s']);
+                    $stmt->execute();
+                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$POST['d']);
+                    $stmt->execute();
+                    $stmt->debugDumpParams();
+                    $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($libriSpostati as $libro) {
+                        echo "<td><img src=\"";
+                        echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+                        echo '"></td><td>';
+                        echo "ISBN: ";
+                        echo $libro["ISBN"];
+                        echo "<br>Titolo: ";
+                        echo $libro["Titolo"];
+                        echo "</br>Autore: ";
+                        echo $libro["Autore"];
+                        echo "<br>Posizione: ".$POST['s'];
+                        echo "<br>Nuova posizione: ".$libro["Posizione"];
+                        echo "</td></tr>\n";
+                    }
                 echo "</table>";
                 }
                 break;
