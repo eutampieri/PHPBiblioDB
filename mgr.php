@@ -46,7 +46,7 @@ if(isset($_COOKIE['token'])){
     $stmt->execute();
     $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     if(date_timestamp_get(date_create_from_format("Y-m-d H:i:s",$sess["Scadenza"]))>time()){
-        $qry='SELECT * FROM Sessioni WHERE Utente = :u';
+        $qry='SELECT * FROM Utenti WHERE Utente = :u';
         $stmt = $database->prepare($qry);
         $stmt->bindParam(':u',$sess["Utente"]);
         $stmt->execute();
