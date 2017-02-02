@@ -8,10 +8,11 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     $stmt->execute();
     $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
     var_dump($utenti);
-    die();/*
+    die();
     if(count($utenti)==1){
-        if($utenti["Master"]==){
-            if(PASSWORD_OK){
+        if($utenti[0]["Master"]=="1"){
+            if(hash("sha256",$_POST["password"])==$utenti[0]["Password"]){
+                die();
                 $token=setToken($_POST["user"],$_POST["password"],800);
                 setcookie("token",$token, time()+860);
                 header("Location: mgr.php");
@@ -28,7 +29,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
         header("Location: index.php?error=Utente+inesistente&mode=login");
     }
     die();
-}
+}/*
 $loggedIn=false;
 if(isset($_COOKIE['token'])){
     $u=getToken($_COOKIE['token'])['user'];
@@ -51,8 +52,8 @@ if(isset($_COOKIE['token'])){
     }
 }
 else{
-    header("Location: index.php#login");*/
-}
+    header("Location: index.php#login");
+}*/
 ?>
 <html>
     <head>
