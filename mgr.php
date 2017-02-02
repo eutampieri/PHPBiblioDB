@@ -297,6 +297,7 @@ else{
                 $stmt->execute();
                 $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($lscatole as $s){
+                    $s=$s["Posizione;"]
                     if(isset($_POST['s'])&&isset($_POST['d'])&&$s==$_POST['s']){
                         echo '<option value="'.$_POST['d'].'">'.$_POST['d'].'</option>\n';
                     }
