@@ -271,22 +271,6 @@ else{
             }
             }
         }
-        function presta($isbn,$state,$user){
-			$tessere=json_decode(file_get_contents('tessere.json'),true);
-			if(isset($tessere[0][$user])){
-				#
-			}
-			else{
-				return "Utente insesistente";
-			}
-		}
-        $libri=json_decode(file_get_contents("bibliodb.json"),true);
-        $lscatole=array();
-        foreach ($libri[1] as $key => $value){
-            if(!isset($lscatole[$value])){
-            $lscatole[$value]=0;
-            }
-        }
         if(isset($_POST['mode'])&&($_POST['mode']=='add'||$_POST['mode']=='edit')){
             $i=$_POST['isbn'];
             $libri[1][$i]=strtoupper($_POST['pos']);
@@ -308,13 +292,17 @@ else{
                 echo '<form method="post" action="?mode=scatola">Origine:<div data-role="fieldcontain" data-controltype="selectmenu">
                     <select name="s">
                     ';
-                foreach ($lscatole as $s=>$key){
-                if(isset($_POST['s'])&&isset($_POST['d'])&&$s==$_POST['s']){
-                    echo '<option value="'.$_POST['d'].'">'.$_POST['d'].'</option>\n';
-                }
-                else{
-                    echo '<option value="'.$s.'">'.$s."</option>\n";
-                }
+                $qry='SELECT DISTINCT Posizione FROM Libri';
+                $stmt = $database->prepare($qry);
+                $stmt->execute();
+                $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($lscatole as $s){
+                    if(isset($_POST['s'])&&isset($_POST['d'])&&$s==$_POST['s']){
+                        echo '<option value="'.$_POST['d'].'">'.$_POST['d'].'</option>\n';
+                    }
+                    else{
+                        echo '<option value="'.$s.'">'.$s."</option>\n";
+                    }
                 }
                 echo'
                     </select>
