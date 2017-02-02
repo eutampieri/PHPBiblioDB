@@ -7,7 +7,6 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     $stmt->bindParam(':u',$_POST["user"]);
     $stmt->execute();
     $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    die();
     if(count($utenti)==1){
         if($utenti[0]["Master"]=="1"){
             if(hash("sha256",$_POST["password"])==$utenti[0]["Password"]){
