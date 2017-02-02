@@ -70,6 +70,7 @@ if(isset($_COOKIE['token'])){
 }
 else{
     header("Location: index.php#login");
+    die();
 }
 ?>
 <html>
@@ -174,6 +175,7 @@ else{
         </div>
         <div data-role="content">
         <?php
+        $database = new PDO('sqlite:bibliodb.sqlite');
         function get_http_response_code($domain1) {
             $headers = get_headers($domain1);
             return substr($headers[0], 9, 3);
