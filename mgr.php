@@ -325,7 +325,7 @@ else{
                 $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($libriSpostati as $libro) {
                     echo "<td><img src=\"";
-                    echo gbooks($key,"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
                     echo '"></td><td>';
                     echo "ISBN: ";
                     echo $libro["ISBN"];
