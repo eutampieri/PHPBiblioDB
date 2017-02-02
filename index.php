@@ -262,7 +262,7 @@ if(!is_file("bibliodb.sqlite")){
 		";
 								foreach ($libri as $libro) {
 									echo "<td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
 									echo "ISBN: ";
 									echo $libro["ISBN"];
@@ -287,7 +287,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "<table>";
 							foreach($libri as $libro){
 								echo "<td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
 									echo "ISBN: ";
 									echo $libro["ISBN"];
@@ -312,7 +312,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "<table>";
 							foreach($libri as $libro){
 								echo "<td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
 									echo "ISBN: ";
 									echo $libro["ISBN"];
@@ -342,7 +342,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "<table>";
 							foreach($libri as $libro){
 								echo "<td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
 									echo "ISBN: ";
 									echo $libro["ISBN"];
@@ -367,7 +367,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "<table>";
 							foreach($libri as $libro){
 								echo "<td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
 									echo "ISBN: ";
 									echo $libro["ISBN"];
@@ -397,7 +397,7 @@ if(!is_file("bibliodb.sqlite")){
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 								foreach($libri as $libro){
 									echo "<tr><td><img src=\"";
-									echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo '"></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
