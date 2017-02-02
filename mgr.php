@@ -17,7 +17,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
 				$stmt = $database->prepare($qry);
                 $stmt->bindParam(':token',$token);
                 $stmt->bindParam(':ip',$ip);
-                $stmt->scadenza(':scadenzaq',$scadenza);
+                $stmt->bindParam(':scadenza',$scadenza);
                 $stmt->bindParam(':utente',$_POST["user"]);
 				$stmt->execute();
                 setcookie("token",$token, time()+860);
