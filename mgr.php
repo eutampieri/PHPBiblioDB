@@ -7,10 +7,10 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
     $stmt->bindParam(':u',$_POST["user"]);
     $stmt->execute();
     $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    var_dump(count($utenti));
+    var_dump($utenti);
     die();/*
-    if(UTENTE_ESISTENTE){
-        if(AMMINISTRATORE){
+    if(count($utenti)==1){
+        if($utenti["Master"]==){
             if(PASSWORD_OK){
                 $token=setToken($_POST["user"],$_POST["password"],800);
                 setcookie("token",$token, time()+860);
