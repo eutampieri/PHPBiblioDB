@@ -15,7 +15,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
                 header("Location: mgr.php");
             }
             else{
-                header("Location: index.php?error=Password+errata+".$_POST["password"].'+'.$utenti[0]["Password"]."&mode=login");
+                header("Location: index.php?error=Password+errata+".hash("sha256",$_POST["password"]).'+'.$utenti[0]["Password"]."&mode=login");
             }
         }
         else{
