@@ -66,7 +66,7 @@ if(isset($_COOKIE['token'])){
     }
     else{
         header("Location: index.php?error=Sessione+scaduta&mode=login");
-    }*/
+    }
 }
 else{
     header("Location: index.php#login");
