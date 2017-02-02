@@ -312,8 +312,9 @@ else{
                     <input type="hidden" name="mode" value="scatola">
                     <input type="submit" value="Sposta"></form>';
                 if(isset($_POST['s'])&&isset($_POST['d'])){
+                    error_log("Hey!");
                 echo "<table>";
-                $qry='UPDATE Libri SET Posizione = :d WHERE Posizione=:s';
+                $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':d',$POST['d']);
                 $stmt->bindParam(':s',$POST['s']);
