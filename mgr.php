@@ -1,4 +1,5 @@
 <?php
+include("res/bibliodb.php");
 if(isset($_POST['user'])&&isset($_POST['password'])){
     $database = new PDO('sqlite:bibliodb.sqlite');
     $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -176,103 +177,6 @@ else{
         <div data-role="content">
         <?php
         $database = new PDO('sqlite:bibliodb.sqlite');
-        function get_http_response_code($domain1) {
-            $headers = get_headers($domain1);
-            return substr($headers[0], 9, 3);
-        }
-        function statoLibro($isbn,$dict){
-            if(isset($dict[0][$isbn])){
-            if($dict[0][$isbn]==1){
-                return "Disponibile";
-            }
-            else{
-                return "Prestato in data ".$dict[8][$isbn];
-            }
-            }
-            else{
-            return "Disponibile";
-            }
-        }
-        function gbooks($isbn, $mode,$tit,$aut){
-            $cache=json_decode(file_get_contents("pub/covers.json"),true);
-            if(isset($cache[$isbn])){
-            return $cache[$isbn];
-            }
-            else{
-            if(substr($isbn,0,1)==2){
-                switch($mode){
-                case "copertina":
-                    return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                case "titolo":
-                    return "Nessun dato";
-                case "autore":
-                    return "Nessun dato";
-                }
-            }
-            else{
-                $result=json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$isbn."&projection=lite"),true);
-                if($result["totalItems"]>0){
-                $info=$result["items"][0]["volumeInfo"];
-                if($mode=="copertina"){
-                    if(isset($info["imageLinks"]["thumbnail"])) {
-                    return($info["imageLinks"]["thumbnail"]);
-                    }
-                    else {
-                    $txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-                    return $txturl;
-                    if(get_http_response_code($txturl) != "200"){
-                        $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    }
-                    else{
-                        $cache[$isbn]=$txturl;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return($txturl);
-                    }
-                    }
-                    $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    file_put_contents("pub/covers.json", json_encode($cache));
-                    return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                }
-                else{
-                    if($mode=="titolo"){
-                    return $info["title"];
-                    }
-                    else if($mode=="autore"){
-                    return $info["authors"];
-                    }
-                }
-                }
-                else{
-                if($mode=="copertina"){
-                    $txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-                    if(get_http_response_code($txturl) != "200"||file_get_contents("http://img.libraccio.it/images/N00030000_0_200_0_100.jpg")==file_get_contents($txturl)){
-                    $sb=exec('python sbcover.py '.$isbn);
-                    if(get_http_response_code($sb)!=200){
-                        $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    }
-                    else{
-                        $cache[$isbn]=$sb;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return $sb;
-                    }
-                    }
-                    else{
-                    $cache[$isbn]=$txturl;
-                    file_put_contents("pub/covers.json", json_encode($cache));
-                    return ($txturl);
-                    }
-                }
-                else{
-                    return("Nessun dato");
-                }
-                }
-            }
-            }
-        }
         if(isset($_POST['mode'])&&($_POST['mode']=='add'||$_POST['mode']=='edit')){
             $i=$_POST['isbn'];
             $libri[1][$i]=strtoupper($_POST['pos']);
@@ -335,7 +239,7 @@ else{
                         echo $libro["Titolo"];
                         echo "</br>Autore: ";
                         echo $libro["Autore"];
-                        echo "<br>Posizione: ".$_POST['s'];
+                        echo "<br>Posizione precedente: ".$_POST['s'];
                         echo "<br>Nuova posizione: ".$_POST['d'];
                         echo "</td></tr>\n";
                     }
@@ -346,58 +250,75 @@ else{
 
             break;
             case 'elimina':
-            $i=$GET['isbn'];
-            unset($libri[1][$i]);
-            unset($libri[2][$libri[3][$i]]);
-            unset($libri[3][$i]);
-            unset($libri[4][$i]);
-            unset($libri[6][$i]);
-            file_put_contents('bibliodb.json', json_encode($libri));
-            echo "<h2>Rimosso ".$i."</h2>";
-            break;
+                $i=$_GET['id'];
+                $qry='SELECT Titolo FROM Libri WHERE ID=:d';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$_GET['id']);
+                $stmt->execute();
+                $tit=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Titolo"];
+                $qry='DELETE FROM Libri WHERE ID=:d';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$_GET['id']);
+                $stmt->execute();
+                echo "<h2>Rimosso ".$tit."</h2>";
+                break;
             case 'modifica':
-                if(isset($_GET['isbn'])){
+                if(isset($_GET['id'])){
+                    $qry='SELECT * FROM Libri WHERE ID=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_GET['id']);
+                    $stmt->execute();
+                    $libro=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
                     $key=$_GET['isbn'];
                     echo "<form method=\"post\" action=\"mgr.php\"><input type=\"hidden\" name=\"mode\" value=\"edit\">";
                     echo "<img src=\"";
-                    echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key]))).'">';
+                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]).'">';
                     echo "<br>Titolo: ";
                     echo '<input type="text" name="tit" value="';
-                    echo ucwords($libri[3][$key]);
+                    echo $libro["Titolo"];
                     echo '">';
                     echo "</br>Autore: ";
                     echo '<input type="text" name="aut" value="';
-                    echo ucwords($libri[4][$key]);
+                    echo $libro["Autore"];
                     echo '">';
-		    echo '<input type="hidden" name="isbn" value="'.$key.'">';
+		            echo '<input type="hidden" name="id" value="'.$_GET['id'].'">';
                     echo "<br>Posizione: ";
                     echo '<input type="text" name="pos" value="';
-                    echo ucwords($libri[1][$key]);
+                    echo $libro["Posizione"];
                     echo '">';
                     $libri[1][$key]=$_POST['d'];
                     echo "<input type=\"submit\" value=\"Salva\"></form>\n";
                 }
                 elseif(isset($_GET['pos'])){
                     echo "<table>";
-                    foreach ($libri[3] as $isbn => $titolo) {
-                        if($libri[1][$isbn]==$_GET['pos']){
+                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_GET['pos']);
+                    $stmt->execute();
+                    $libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($libri as $libro) {
                         echo "<td><img src=\"";
-                        echo gbooks($isbn,"copertina",urlencode(ucwords($titolo)),urlencode(ucwords($libri[4][$isbn])));
+                        echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
                         echo '"></td><td>';
                         echo "Titolo: ";
-                        echo ucwords($titolo);
+                        echo $libro["Titolo"];
                         echo "</br>Autore: ";
-                        echo ucwords($libri[4][$isbn]);
+                        echo $libro["Autore"];
                         echo "<br>ISBN: ";
-                        echo $isbn;
-                        echo "<br>Posizione: ".$libri[1][$isbn];
-                        echo '</td><td><a href="?mode=modifica&isbn='.$isbn.'"><img src="edit.svg"></a></td><td><a href="?mode=elimina&isbn='.$isbn.'"><img src="del.svg"></a></td></tr>'."\n";}
+                        echo $libro["ISBN"];
+                        echo "<br>Posizione: ".$libro["Posizione"];
+                        echo '</td><td><a href="?mode=modifica&id='.$libro["ID"].'"><img src="edit.svg"></a></td><td><a href="?mode=elimina&id='.$libro["ID"].'"><img src="del.svg"></a></td></tr>'."\n";
                     }
                     echo "</table>";
                 }
                 else{
                     echo "<h1>Seleziona la posizione</h1>";
-                    foreach($lscatole as $s=>$i){
+                    $qry='SELECT DISTINCT Posizione FROM Libri';
+                    $stmt = $database->prepare($qry);
+                    $stmt->execute();
+                    $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach($lscatole as $s){
+                        $s=$s["Posizione"];
                         if($s==""){
                             echo '<a href="?mode=modifica&pos=" class="ui-btn">Nessuna posizione</a>'."\n";
                         }
