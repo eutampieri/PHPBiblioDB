@@ -317,20 +317,15 @@ else{
                     echo "<table>";
                     $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
                     $stmt = $database->prepare($qry);
-                    $stmt->bindParam(':d',$POST['d']);
-                    $stmt->bindParam(':s',$POST['s']);
+                    $stmt->bindParam(':d',$_POST['d']);
+                    $stmt->bindParam(':s',$_POST['s']);
                     $stmt->execute();
                     $qry='SELECT * FROM Libri WHERE Posizione=:d';
                     $stmt = $database->prepare($qry);
-                    $stmt->bindParam(':d',$POST['s']);
+                    $stmt->bindParam(':d',$_POST['d']);
                     $stmt->execute();
                     $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($libriSpostati as $libro) {
-                        $qry='UPDATE Libri SET Posizione = :d WHERE ID = :s';
-                        $stmt = $database->prepare($qry);
-                        $stmt->bindParam(':d',$POST['d']);
-                        $stmt->bindParam(':s',$libro["ID"]);
-                        $stmt->execute();
                         echo "<td><img src=\"";
                         echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
                         echo '"></td><td>';
@@ -340,8 +335,8 @@ else{
                         echo $libro["Titolo"];
                         echo "</br>Autore: ";
                         echo $libro["Autore"];
-                        echo "<br>Posizione: ".$POST['s'];
-                        echo "<br>Nuova posizione: ".$POST['d'];
+                        echo "<br>Posizione: ".$_POST['s'];
+                        echo "<br>Nuova posizione: ".$_POST['d'];
                         echo "</td></tr>\n";
                     }
                 echo "</table>";
