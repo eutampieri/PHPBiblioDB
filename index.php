@@ -1,3 +1,10 @@
+<?php
+include("res/bibliodb.php");
+if(!is_file("bibliodb.sqlite")){
+	header("Location: migration.php");
+	die();
+}
+?>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -112,204 +119,110 @@
 				Scansiona un ISBN
 			</a>
 					<?php
-					function get_http_response_code($domain1) {
-						$headers = get_headers($domain1);
-						return substr($headers[0], 9, 3);
-					}
-					function statoLibro($isbn,$dict){
-						if(isset($dict[0][$isbn])){
-							if($dict[0][$isbn]==1){
-								return "Disponibile";
-							}
-							else{
-								return "Prestato in data ".$dict[8][$isbn];
-							}
-						}
-						else{
-							return "Disponibile";
-						}
-					}
-					function gbooks($isbn, $mode,$tit,$aut){
-						$cache=json_decode(file_get_contents("pub/covers.json"),true);
-						if(isset($cache[$isbn])){
-							return $cache[$isbn];
-						}
-						else{
-							if(substr($isbn,0,1)==2){
-								switch($mode){
-									case "copertina":
-									return"res/mimg.php?tit=".$tit."&aut=".$aut;
-									case "titolo":
-									return "Nessun dato";
-									case "autore":
-									return "Nessun dato";
-								}
-							}
-							else{
-								$result=json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$isbn."&projection=lite"),true);
-								if($result["totalItems"]>0){
-									$info=$result["items"][0]["volumeInfo"];
-									if($mode=="copertina"){
-										if(isset($info["imageLinks"]["thumbnail"])) {
-											return($info["imageLinks"]["thumbnail"]);
-										}
-										else {
-											$txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-											return $txturl;
-											if(get_http_response_code($txturl) != "200"){
-												$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-												file_put_contents("pub/covers.json", json_encode($cache));
-												return"res/mimg.php?tit=".$tit."&aut=".$aut;
-											}
-											else{
-												$cache[$isbn]=$txturl;
-												file_put_contents("pub/covers.json", json_encode($cache));
-												return($txturl);
-											}
-										}
-										$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-										file_put_contents("pub/covers.json", json_encode($cache));
-										return"res/mimg.php?tit=".$tit."&aut=".$aut;
-									}
-									else{
-										if($mode=="titolo"){
-											return $info["title"];
-										}
-										else if($mode=="autore"){
-											return $info["authors"];
-										}
-									}
-								}
-								else{
-									if($mode=="copertina"){
-										$txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-										if(get_http_response_code($txturl) != "200"||file_get_contents("http://img.libraccio.it/images/N00030000_0_200_0_100.jpg")==file_get_contents($txturl)){
-											$sb=exec('python sbcover.py '.$isbn);
-											if(get_http_response_code($sb)!=200){
-												$cache[$isbn]="res/mimg.php?tit=".$tit."&aut=".$aut;
-												file_put_contents("pub/covers.json", json_encode($cache));
-												return"res/mimg.php?tit=".$tit."&aut=".$aut;
-											}
-											else{
-												$cache[$isbn]=$sb;
-												file_put_contents("pub/covers.json", json_encode($cache));
-												return $sb;
-											}
-										}
-										else{
-											$cache[$isbn]=$txturl;
-											file_put_contents("pub/covers.json", json_encode($cache));
-											return ($txturl);
-										}
-									}
-									else{
-										return("Nessun dato");
-									}
-								}
-							}
-						}
-					}
-					$libri=json_decode(file_get_contents("bibliodb.json"),true);
+					$file_db = new PDO('sqlite:bibliodb.sqlite');
 					if(!isset($_GET['mode'])){
+						$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						$qry='SELECT * FROM Libri LIMIT 10';
+						$stmt = $file_db->prepare($qry);
+						$stmt->execute();
+						$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 						echo "			<table>
 				<tr>
 ";
-						if($_GET['debug']=="true"){
-							ini_set("precision", 5);
-							$time=intval(microtime(true));
-							$csv="ISBN,begin,this\n";
-							$uuid=uniqid();
-						}
-						$brk=0;
-						foreach ($libri[1] as $key => $value) {
-							if($_GET['debug']=="true"){
-								$ptime=microtime(true);
-							}
+						foreach ($libri as $libro) {
 							echo "<td><img src=\"";
-							echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
+							echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 							echo "\"></td><td>";
 							echo "ISBN: ";
-							echo $key;
+							echo $libro["ISBN"];
 							echo "<br>Titolo: ";
-							echo ucwords($libri[3][$key]);
+							echo  $libro["Titolo"];
 							echo "</br>Autore: ";
-							echo ucwords($libri[4][$key]);
+							echo  $libro["Autore"];
 							echo "</br>Posizione: ";
-							echo $value;
-							echo "<br>Stato: ".statoLibro($key,$libri);
-							if($_GET['debug']=="true"){
-								$csv=$csv.$key.",".strval(microtime(true)-$time).",".strval(microtime(true)-$ptime)."\n";
-							}
+							echo $libro["Posizione"];
+							echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
 				#echo "<br>Tempo: ".strval((intval(microtime(true)/1000)/1000)-$time)."s, +".strval(microtime(true)-$ptime);
 							echo "</td></tr>\n";
-							$brk=$brk+1;
-							if($brk>20){
-								break;
-							}
+
 						}
-						file_put_contents('/var/www/html/dbgcl/'.$uuid.".csv", $csv);
 						echo "</table>";
-						if($_GET['debug']=="true"){
-							echo '<a href="getdbg.php?id='.$uuid.'">Scarica i dati di debug</a>';
-						}
 						echo '<a href="?mode=all">Mostra la lista completa (Pu&ograve; richiedere molto tempo...)</a>'."\n";
 					}
 					else{
 						switch ($_GET['mode']) {
 							case 'all':
-									foreach ($libri[1] as $key => $value) {
-										echo "			<table>
-				<tr>
-";
-										echo "<td><img src=\"";
-										echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
-										echo "\"></td><td>";
-										echo "ISBN: ";
-										echo $key;
-										echo "<br>Titolo: ";
-										echo ucwords($libri[3][$key]);
-										echo "</br>Autore: ";
-										echo ucwords($libri[4][$key]);
-										echo "</br>Posizione: ";
-										echo $value;
-										echo "<br>Stato: ".statoLibro($key,$libri);
-							#echo "<br>Tempo: ".strval((intval(microtime(true)/1000)/1000)-$time)."s, +".strval(microtime(true)-$ptime);
-										echo "</td></tr>\n";
-									}
+								$qry='SELECT * FROM Libri';
+								$stmt = $file_db->prepare($qry);
+								$stmt->execute();
+								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+								echo "			<table>
+						<tr>
+		";
+								foreach ($libri as $libro) {
+									echo "<td><img src=\"";
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
+								}
+								echo "</table>";
 									break;
 							case 'titolo':
+							$qry='SELECT * FROM Libri WHERE Titolo LIKE :q';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->bindParam(':q',$ricerca);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							echo "<table>";
-							foreach($libri[3] as $isbn=>$titolo){
-								if(strpos($titolo,strtolower($_GET[q]))!==false){
-									echo"<tr><td><img src=\"";
-									echo gbooks($isbn,"copertina",urlencode(ucwords($titolo)),urlencode(ucwords($libri[4][$isbn])));
-									echo "\"></td><td>Titolo: ";
-									echo ucwords($titolo);
-									echo "<br>Autore: ";
-									echo ucwords($libri[4][$isbn]);
-									echo "<br>ISBN: ".$isbn;
-									echo "<br>Posizione: ".$libri[1][$isbn];
-									echo "<br>Stato: ".statoLibro($isbn, $libri);
-									echo "</td></tr>";
-								}
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
 							}
 							echo "</table>";
 							break;
 							case 'autore':
+							$qry='SELECT * FROM Libri WHERE Autore LIKE :q';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->bindParam(':q',$ricerca);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							echo "<table>";
-							foreach($libri[4] as $isbn=>$autore){
-								if(strpos($autore,strtolower($_GET[q]))!==false){
-									echo"<tr><td><img src=\"";
-									echo gbooks($isbn,"copertina",urlencode(ucwords($libri[3][$isbn])),urlencode(ucwords($autore)));
-									echo "\"></td><td>Titolo: ";
-									echo ucwords($libri[3][$isbn]);
-									echo "<br>Autore: ";
-									echo ucwords($autore);
-									echo "<br>ISBN: ".$isbn;
-									echo "<br>Posizione: ".$libri[1][$isbn];
-									echo "<br>Stato: ".statoLibro($isbn, $libri);
-									echo "</td></tr>";
-								}
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
 							}
 							echo "</table>";
 							break;
@@ -320,55 +233,78 @@
 							if(isset($_GET['ean'])){
 								$isbns=$_GET["ean"];
 							}
-							echo "<table>\n<tr>\n<td><img src=\"";
-							echo gbooks($isbns,"copertina",urlencode(ucwords($libri[3][$isbns])),urlencode(ucwords($libri[4][$isbns])));
-							echo "\"></td><td>Titolo: ";
-							echo ucwords($libri[3][$isbns]);
-							echo "<br>Autore: ";
-							echo ucwords($libri[4][$isbns]);
-							echo "<br>Posizione: ";
-							echo $libri[1][$isbns];
-							echo "<br>Stato: ".statoLibro($isbns,$libri);
+							$qry='SELECT * FROM Libri WHERE ISBN = :q';
+							$stmt = $file_db->prepare($qry);
+							$stmt->bindParam(':q',$isbns);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+							echo "<table>";
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
+									echo "\"></td><td>";
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
+							}
+							echo "</table>";
 							break;
 							case 'posizione':
+							$qry='SELECT * FROM Libri WHERE Posizione = :q';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->bindParam(':q',$ricerca);
+							$stmt->execute();
+							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							echo "<table>";
-							foreach ($libri[1] as $isbn=>$pos){
-								if(strtolower($_GET["q"])==strtolower($pos)){
-									echo "<tr>";
-									echo "<td>";
-									echo "<img src=\"";
-									echo gbooks($isbn, "copertina",urlencode(ucwords($libri[3][$isbn])),urlencode(ucwords($libri[4][$isbn])));
+							foreach($libri as $libro){
+								echo "<td><img src=\"";
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo "\"></td><td>";
-									echo "Titolo: ";
-									echo ucwords($libri[3][$isbn]);
-									echo "<br>Autore: ".ucwords($libri[4][$isbn]);
-									echo "<br>ISBN: ".$isbn;
-									echo "<br>Stato: ".statoLibro($isbn,$libri);;
-								}
+									echo "ISBN: ";
+									echo $libro["ISBN"];
+									echo "<br>Titolo: ";
+									echo  $libro["Titolo"];
+									echo "</br>Autore: ";
+									echo  $libro["Autore"];
+									echo "</br>Posizione: ";
+									echo $libro["Posizione"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
+									echo "</td></tr>\n";
 							}
 							echo "</table>";
 							break;
 							case 'pos':
-							$scatole=array();
-							foreach ($libri[1] as $key => $value){
-								$scatole[$value]=[];
-							}
-							foreach ($libri[1] as $key => $value) {
-								array_push($scatole[$value], $key);
-							}
-							foreach ($scatole as $s => $arr){
-								echo "<div data-role=\"collapsible\"><h2>".$s."</h2><table>";
-								for($i=0;$i<count($arr);$i++){
+							$qry='SELECT DISTINCT Posizione FROM Libri';
+							$stmt = $file_db->prepare($qry);
+							$ricerca="%".$_GET['q']."%";
+							$stmt->execute();
+							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+							foreach ($scatole as $s){
+								echo "<div data-role=\"collapsible\"><h2>".$s["Posizione"]."</h2><table>";
+								$qry='SELECT * FROM Libri WHERE Posizione = :q';
+								$stmt = $file_db->prepare($qry);
+								$stmt->bindParam(':q',$s["Posizione"]);
+								$stmt->execute();
+								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+								foreach($libri as $libro){
 									echo "<tr><td><img src=\"";
-									echo gbooks($arr[$i],"copertina",urlencode(ucwords($libri[3][$arr[$i]])),urlencode(ucwords($libri[4][$arr[$i]])));
+									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
 									echo '"></td><td>';
 									echo "ISBN: ";
-									echo $arr[$i];
+									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
-									echo ucwords($libri[3][$arr[$i]]);
+									echo $libro["Titolo"];
 									echo "</br>Autore: ";
-									echo ucwords($libri[4][$arr[$i]]);
-									echo "<br>Stato: ".statoLibro($arr[$i],$libri);
+									echo $libro["Autore"];
+									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
 									echo "</td></tr>\n";
 								}
 								echo "</table></div>";}

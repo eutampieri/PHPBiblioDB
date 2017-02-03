@@ -7,6 +7,7 @@ The database consists in an SQLITE file containing four tables.
 ###Libri
 
 This table contains books. It has these columns:
+* ID (text)
 * ISBN (text)
 * Titolo (text)
 * Autore (text)
@@ -38,6 +39,13 @@ This table contains library users. It has theese columns:
 * Nome (text)
 * Cognome (text)
 * Dati (JSON containing additional infos)
+
+##Caching
+To save time and load covers quickly, create a file named `covers.json` in the
+folder in wich is contained `index.php` with the following content:
+```
+{}
+```
 
 <!--*This software is written in Python and it manages book collections.*
 You can use in two ways: 

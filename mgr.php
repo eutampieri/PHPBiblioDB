@@ -1,57 +1,77 @@
 <?php
-include('tokenizr.php');
-$key=exec('./jsonvalidator.out');
-$data=base64_decode(file_get_contents('bibliodb-utenti.json'));
-$utenti = json_decode(trim(mcrypt_decrypt('rijndael-128', $key, $data, 'ecb'),'{'),true);
+include("res/bibliodb.php");
 if(isset($_POST['user'])&&isset($_POST['password'])){
-    if(isset($utenti[0][$_POST['user']])){
-    if($utenti[2][$_POST['user']]=="admin"){
-        if($utenti[0][$_POST['user']]==$_POST['password']){
-        $token=setToken($_POST["user"],$_POST["password"],800);
-        setcookie("token",$token, time()+860);
-        header("Location: mgr.php");
+    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $qry='SELECT * FROM Utenti WHERE Utente = :u';
+    $stmt = $database->prepare($qry);
+    $stmt->bindParam(':u',$_POST["user"]);
+    $stmt->execute();
+    $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    if(count($utenti)==1){
+        if($utenti[0]["Master"]=="1"){
+            if(password_verify($_POST["password"],$utenti[0]["Password"])){
+				$qry='INSERT INTO Sessioni VALUES (:token, :ip, :scadenza, :utente)';
+                $token=strval(uniqid("sess"));
+                $scadenza=date("Y-m-d H:i:s",time()+860);
+                $ip=$_SERVER['REMOTE_ADDR'];
+				$stmt = $database->prepare($qry);
+                $stmt->bindParam(':token',$token);
+                $stmt->bindParam(':ip',$ip);
+                $stmt->bindParam(':scadenza',$scadenza);
+                $stmt->bindParam(':utente',$_POST["user"]);
+				$stmt->execute();
+                setcookie("token",$token, time()+860);
+                header("Location: mgr.php");
+            }
+            else{
+                header("Location: index.php?error=Password+errata+".hash("sha256",$_POST["password"]).'+'.$utenti[0]["Password"]."&mode=login");
+            }
         }
         else{
-        header("Location: index.php?error=Password+errata&mode=login");
+            header("Location: index.php?error=Utente+non+autorizzato&mode=login");
         }
     }
     else{
-        header("Location: index.php?error=Utente+non+autorizzato&mode=login");
+        header("Location: index.php?error=Utente+inesistente&mode=login");
     }
-    }
-    else{
-    header("Location: index.php?error=Utente+inesistente&mode=login");
-    }
-    die();
-}
-if(isset($_GET['js'])&&$_GET['js']=='true'){
-    sleep(5);
-    header("Location: mgr.php");
     die();
 }
 $loggedIn=false;
 if(isset($_COOKIE['token'])){
-    $u=getToken($_COOKIE['token'])['user'];
-    $p=getToken($_COOKIE['token'])['pwd'];
-    if(isset($utenti[0][$u])){
-    if($utenti[2][$u]=="admin"){
-        if($utenti[0][$u]==$p){
-        $loggedIn=true;
+    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $qry='SELECT * FROM Sessioni WHERE Token = :tk';
+    $stmt = $database->prepare($qry);
+    $stmt->bindParam(':tk',$_COOKIE['token']);
+    $stmt->execute();
+    $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+    if(date_timestamp_get(date_create_from_format("Y-m-d H:i:s",$sess["Scadenza"]))>time()){
+        $qry='SELECT * FROM Utenti WHERE Utente = :u';
+        $stmt = $database->prepare($qry);
+        $stmt->bindParam(':u',$sess["Utente"]);
+        $stmt->execute();
+        $role=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Master"];
+        if($role=="1"){
+            if($_SERVER['REMOTE_ADDR']==$sess["IP"]){
+                $loggedIn=true;
+                //Prolungare la durata della sessione
+            }
+            else{
+                header("Location: index.php?error=Login+fallito&mode=login");
+            }
         }
         else{
-        header("Location: index.php?error=Password+errata&mode=login");
+            header("Location: index.php?error=Non+autorizzato&mode=login");
         }
     }
     else{
-        header("Location: index.php?error=Utente+non+autorizzato&mode=login");
-    }
-    }
-    else{
-    header("Location: index.php?error=Utente+inesistente&mode=login");
+        header("Location: index.php?error=Sessione+scaduta&mode=login");
     }
 }
 else{
     header("Location: index.php#login");
+    die();
 }
 ?>
 <html>
@@ -82,11 +102,11 @@ else{
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
     <script src="js/jquery-1.11.1.min.js"></script>
-    <!--script type="text/javascript">
+    <script type="text/javascript">
      $(document).bind("mobileinit", function () {
          $.mobile.ajaxEnabled = false;
      });
-    </script-->
+    </script>
     <script src="js/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/sha512.js"></script>
     <script src="js/bibliodb.js"></script>
@@ -156,133 +176,29 @@ else{
         </div>
         <div data-role="content">
         <?php
-        function get_http_response_code($domain1) {
-            $headers = get_headers($domain1);
-            return substr($headers[0], 9, 3);
+        $database = new PDO('sqlite:bibliodb.sqlite');
+        if(isset($_POST['mode'])&&$_POST['mode']=='edit'){
+            $id=$_POST['id'];
+            $qry='UPDATE Libri SET Titolo = :tit, Autore = :aut, Posizione=:pos WHERE ID = :id';
+            $stmt = $database->prepare($qry);
+            $stmt->bindParam(':id',$id);
+            $stmt->bindParam(':tit',$_POST['tit']);
+            $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':pos',$_POST['pos']);
+            $stmt->execute();
+            echo "<h3>Aggiornato ".$_POST['tit'].'</h3>';
         }
-        function statoLibro($isbn,$dict){
-            if(isset($dict[0][$isbn])){
-            if($dict[0][$isbn]==1){
-                return "Disponibile";
-            }
-            else{
-                return "Prestato in data ".$dict[8][$isbn];
-            }
-            }
-            else{
-            return "Disponibile";
-            }
-        }
-        function gbooks($isbn, $mode,$tit,$aut){
-            $cache=json_decode(file_get_contents("pub/covers.json"),true);
-            if(isset($cache[$isbn])){
-            return $cache[$isbn];
-            }
-            else{
-            if(substr($isbn,0,1)==2){
-                switch($mode){
-                case "copertina":
-                    return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                case "titolo":
-                    return "Nessun dato";
-                case "autore":
-                    return "Nessun dato";
-                }
-            }
-            else{
-                $result=json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$isbn."&projection=lite"),true);
-                if($result["totalItems"]>0){
-                $info=$result["items"][0]["volumeInfo"];
-                if($mode=="copertina"){
-                    if(isset($info["imageLinks"]["thumbnail"])) {
-                    return($info["imageLinks"]["thumbnail"]);
-                    }
-                    else {
-                    $txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-                    return $txturl;
-                    if(get_http_response_code($txturl) != "200"){
-                        $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    }
-                    else{
-                        $cache[$isbn]=$txturl;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return($txturl);
-                    }
-                    }
-                    $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    file_put_contents("pub/covers.json", json_encode($cache));
-                    return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                }
-                else{
-                    if($mode=="titolo"){
-                    return $info["title"];
-                    }
-                    else if($mode=="autore"){
-                    return $info["authors"];
-                    }
-                }
-                }
-                else{
-                if($mode=="copertina"){
-                    $txturl="http://img.libraccio.it/images/".$isbn."_0_200_0_100.jpg";
-                    if(get_http_response_code($txturl) != "200"||file_get_contents("http://img.libraccio.it/images/N00030000_0_200_0_100.jpg")==file_get_contents($txturl)){
-                    $sb=exec('python sbcover.py '.$isbn);
-                    if(get_http_response_code($sb)!=200){
-                        $cache[$isbn]="res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return"res/mimg.php?id=".uniqid()."&tit=".$tit."&aut=".$aut;
-                    }
-                    else{
-                        $cache[$isbn]=$sb;
-                        file_put_contents("pub/covers.json", json_encode($cache));
-                        return $sb;
-                    }
-                    }
-                    else{
-                    $cache[$isbn]=$txturl;
-                    file_put_contents("pub/covers.json", json_encode($cache));
-                    return ($txturl);
-                    }
-                }
-                else{
-                    return("Nessun dato");
-                }
-                }
-            }
-            }
-        }
-        function presta($isbn,$state,$user){
-			$tessere=json_decode(file_get_contents('tessere.json'),true);
-			if(isset($tessere[0][$user])){
-				#
-			}
-			else{
-				return "Utente insesistente";
-			}
-		}
-        $libri=json_decode(file_get_contents("bibliodb.json"),true);
-        $lscatole=array();
-        foreach ($libri[1] as $key => $value){
-            if(!isset($lscatole[$value])){
-            $lscatole[$value]=0;
-            }
-        }
-        if(isset($_POST['mode'])&&($_POST['mode']=='add'||$_POST['mode']=='edit')){
-            $i=$_POST['isbn'];
-            $libri[1][$i]=strtoupper($_POST['pos']);
-            $libri[2][strtolower($_POST['tit'])]=$i;
-            $libri[3][$i]=strtolower($_POST['tit']);
-            $libri[4][$i]=strtolower($_POST['aut']);
-            $libri[6][$i]="Biblioteca";
-            file_put_contents('bibliodb.json', json_encode($libri));
-            if($_POST['mode']=='edit'){
-                echo "<h3>Aggiornato ".ucwords($_POST['tit']).'</h3>';
-            }
-            elseif($_POST['mode']=='add'){
-                echo "<h3>Aggiunto ".ucwords($_POST['tit']).'</h3>';
-            }
+        else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
+            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione, Proprietario) VALUES(:id, :isbn, :tit, :aut, :pos, "Biblioteca")';
+            $stmt = $database->prepare($qry);
+            $id=strval(uniqid("libro"));
+            $stmt->bindParam(':id',$id);
+            $stmt->bindParam(':tit',$_POST['tit']);
+            $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':pos',$_POST['pos']);
+            $stmt->bindParam(':isbn',$_POST['isbn']);
+            $stmt->execute();
+            echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
         }
         if(isset($_GET['mode'])){
             switch($_GET['mode']){
@@ -290,13 +206,18 @@ else{
                 echo '<form method="post" action="?mode=scatola">Origine:<div data-role="fieldcontain" data-controltype="selectmenu">
                     <select name="s">
                     ';
-                foreach ($lscatole as $s=>$key){
-                if(isset($_POST['s'])&&isset($_POST['d'])&&$s==$_POST['s']){
-                    echo '<option value="'.$_POST['d'].'">'.$_POST['d'].'</option>\n';
-                }
-                else{
-                    echo '<option value="'.$s.'">'.$s."</option>\n";
-                }
+                $qry='SELECT DISTINCT Posizione FROM Libri';
+                $stmt = $database->prepare($qry);
+                $stmt->execute();
+                $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($lscatole as $s){
+                    $s=$s["Posizione"];
+                    if(isset($_POST['s'])&&isset($_POST['d'])&&$s==$_POST['s']){
+                        echo '<option value="'.$_POST['d'].'">'.$_POST['d'].'</option>\n';
+                    }
+                    else{
+                        echo '<option value="'.$s.'">'.$s."</option>\n";
+                    }
                 }
                 echo'
                     </select>
@@ -305,84 +226,106 @@ else{
                     <input type="hidden" name="mode" value="scatola">
                     <input type="submit" value="Sposta"></form>';
                 if(isset($_POST['s'])&&isset($_POST['d'])){
-                echo "<table>";
-                foreach ($libri[1] as $key => $value) {
-                    if($value==$_POST['s']){
-                    echo "<td><img src=\"";
-                    echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key])));
-                    echo '"></td><td>';
-                    echo "ISBN: ";
-                    echo $key;
-                    echo "<br>Titolo: ";
-                    echo ucwords($libri[3][$key]);
-                    echo "</br>Autore: ";
-                    echo ucwords($libri[4][$key]);
-                    echo "<br>Posizione: ".$value;
-                    echo "<br>Nuova posizione: ".$_POST['d'];
-                    $libri[1][$key]=$_POST['d'];
-                    echo "</td></tr>\n";
+                    echo "<table>";
+                    $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_POST['d']);
+                    $stmt->bindParam(':s',$_POST['s']);
+                    $stmt->execute();
+                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_POST['d']);
+                    $stmt->execute();
+                    $libriSpostati=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($libriSpostati as $libro) {
+                        echo "<td><img src=\"";
+                        echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
+                        echo '"></td><td>';
+                        echo "ISBN: ";
+                        echo $libro["ISBN"];
+                        echo "<br>Titolo: ";
+                        echo $libro["Titolo"];
+                        echo "</br>Autore: ";
+                        echo $libro["Autore"];
+                        echo "<br>Posizione precedente: ".$_POST['s'];
+                        echo "<br>Nuova posizione: ".$_POST['d'];
+                        echo "</td></tr>\n";
                     }
-                }
                 echo "</table>";
-                file_put_contents('bibliodb.json',json_encode($libri));
                 }
                 break;
             case 'add':
-
-            break;
+                break;
             case 'elimina':
-            $i=$GET['isbn'];
-            unset($libri[1][$i]);
-            unset($libri[2][$libri[3][$i]]);
-            unset($libri[3][$i]);
-            unset($libri[4][$i]);
-            unset($libri[6][$i]);
-            file_put_contents('bibliodb.json', json_encode($libri));
-            echo "<h2>Rimosso ".$i."</h2>";
-            break;
+                $i=$_GET['id'];
+                $qry='SELECT Titolo FROM Libri WHERE ID=:d';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$_GET['id']);
+                $stmt->execute();
+                $tit=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Titolo"];
+                $qry='DELETE FROM Libri WHERE ID=:d';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':d',$_GET['id']);
+                $stmt->execute();
+                echo "<h2>Rimosso ".$tit."</h2>";
+                break;
             case 'modifica':
-                if(isset($_GET['isbn'])){
+                if(isset($_GET['id'])){
+                    $qry='SELECT * FROM Libri WHERE ID=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_GET['id']);
+                    $stmt->execute();
+                    $libro=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
                     $key=$_GET['isbn'];
                     echo "<form method=\"post\" action=\"mgr.php\"><input type=\"hidden\" name=\"mode\" value=\"edit\">";
                     echo "<img src=\"";
-                    echo gbooks($key,"copertina",urlencode(ucwords($libri[3][$key])),urlencode(ucwords($libri[4][$key]))).'">';
+                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])).'">';
                     echo "<br>Titolo: ";
                     echo '<input type="text" name="tit" value="';
-                    echo ucwords($libri[3][$key]);
+                    echo $libro["Titolo"];
                     echo '">';
                     echo "</br>Autore: ";
                     echo '<input type="text" name="aut" value="';
-                    echo ucwords($libri[4][$key]);
+                    echo $libro["Autore"];
                     echo '">';
-		    echo '<input type="hidden" name="isbn" value="'.$key.'">';
+		            echo '<input type="hidden" name="id" value="'.$_GET['id'].'">';
                     echo "<br>Posizione: ";
                     echo '<input type="text" name="pos" value="';
-                    echo ucwords($libri[1][$key]);
+                    echo $libro["Posizione"];
                     echo '">';
                     $libri[1][$key]=$_POST['d'];
                     echo "<input type=\"submit\" value=\"Salva\"></form>\n";
                 }
                 elseif(isset($_GET['pos'])){
                     echo "<table>";
-                    foreach ($libri[3] as $isbn => $titolo) {
-                        if($libri[1][$isbn]==$_GET['pos']){
+                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $stmt = $database->prepare($qry);
+                    $stmt->bindParam(':d',$_GET['pos']);
+                    $stmt->execute();
+                    $libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($libri as $libro) {
                         echo "<td><img src=\"";
-                        echo gbooks($isbn,"copertina",urlencode(ucwords($titolo)),urlencode(ucwords($libri[4][$isbn])));
+                        echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]));
                         echo '"></td><td>';
                         echo "Titolo: ";
-                        echo ucwords($titolo);
+                        echo $libro["Titolo"];
                         echo "</br>Autore: ";
-                        echo ucwords($libri[4][$isbn]);
+                        echo $libro["Autore"];
                         echo "<br>ISBN: ";
-                        echo $isbn;
-                        echo "<br>Posizione: ".$libri[1][$isbn];
-                        echo '</td><td><a href="?mode=modifica&isbn='.$isbn.'"><img src="edit.svg"></a></td><td><a href="?mode=elimina&isbn='.$isbn.'"><img src="del.svg"></a></td></tr>'."\n";}
+                        echo $libro["ISBN"];
+                        echo "<br>Posizione: ".$libro["Posizione"];
+                        echo '</td><td><a href="?mode=modifica&id='.$libro["ID"].'"><img src="edit.svg"></a></td><td><a href="?mode=elimina&id='.$libro["ID"].'"><img src="del.svg"></a></td></tr>'."\n";
                     }
                     echo "</table>";
                 }
                 else{
                     echo "<h1>Seleziona la posizione</h1>";
-                    foreach($lscatole as $s=>$i){
+                    $qry='SELECT DISTINCT Posizione FROM Libri';
+                    $stmt = $database->prepare($qry);
+                    $stmt->execute();
+                    $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach($lscatole as $s){
+                        $s=$s["Posizione"];
                         if($s==""){
                             echo '<a href="?mode=modifica&pos=" class="ui-btn">Nessuna posizione</a>'."\n";
                         }
