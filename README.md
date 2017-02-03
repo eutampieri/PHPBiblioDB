@@ -7,6 +7,7 @@ The database consists in an SQLITE file containing four tables.
 ###Libri
 
 This table contains books. It has these columns:
+* ID (text)
 * ISBN (text)
 * Titolo (text)
 * Autore (text)

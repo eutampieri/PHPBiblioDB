@@ -177,20 +177,28 @@ else{
         <div data-role="content">
         <?php
         $database = new PDO('sqlite:bibliodb.sqlite');
-        if(isset($_POST['mode'])&&($_POST['mode']=='add'||$_POST['mode']=='edit')){
-            $i=$_POST['isbn'];
-            $libri[1][$i]=strtoupper($_POST['pos']);
-            $libri[2][strtolower($_POST['tit'])]=$i;
-            $libri[3][$i]=strtolower($_POST['tit']);
-            $libri[4][$i]=strtolower($_POST['aut']);
-            $libri[6][$i]="Biblioteca";
-            file_put_contents('bibliodb.json', json_encode($libri));
-            if($_POST['mode']=='edit'){
-                echo "<h3>Aggiornato ".ucwords($_POST['tit']).'</h3>';
-            }
-            elseif($_POST['mode']=='add'){
-                echo "<h3>Aggiunto ".ucwords($_POST['tit']).'</h3>';
-            }
+        if(isset($_POST['mode'])&&$_POST['mode']=='edit'){
+            $id=$_POST['id'];
+            $qry='UPDATE Libri SET Titolo = :tit, Autore = :aut, Posizione=:pos WHERE ID = :id';
+            $stmt = $database->prepare($qry);
+            $stmt->bindParam(':id',$id);
+            $stmt->bindParam(':tit',$_POST['tit']);
+            $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':pos',$_POST['pos']);
+            $stmt->execute();
+            echo "<h3>Aggiornato ".$_POST['tit'].'</h3>';
+        }
+        else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
+            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione, Proprietario) VALUES(:id, :isbn, :tit, :aut, :pos, "Biblioteca")';
+            $stmt = $database->prepare($qry);
+            $id=strval(uniqid("libro"));
+            $stmt->bindParam(':id',$id);
+            $stmt->bindParam(':tit',$_POST['tit']);
+            $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':pos',$_POST['pos']);
+            $stmt->bindParam(':isbn',$_POST['isbn']);
+            $stmt->execute();
+            echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
         }
         if(isset($_GET['mode'])){
             switch($_GET['mode']){
@@ -247,8 +255,7 @@ else{
                 }
                 break;
             case 'add':
-
-            break;
+                break;
             case 'elimina':
                 $i=$_GET['id'];
                 $qry='SELECT Titolo FROM Libri WHERE ID=:d';
