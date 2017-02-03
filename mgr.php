@@ -272,7 +272,7 @@ else{
                     $key=$_GET['isbn'];
                     echo "<form method=\"post\" action=\"mgr.php\"><input type=\"hidden\" name=\"mode\" value=\"edit\">";
                     echo "<img src=\"";
-                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"]).'">';
+                    echo gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])).'">';
                     echo "<br>Titolo: ";
                     echo '<input type="text" name="tit" value="';
                     echo $libro["Titolo"];
