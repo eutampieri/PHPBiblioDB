@@ -378,7 +378,6 @@ else{
                 break;
             default:
                 break;
-            }
             case "dedup":
                 copy("bibliodb.sqlite","bibliodb-".strval(time()).".sqlite");
                 $stmt = $database->prepare("SELECT Titolo,Autore,ISBN,Posizione FROM Libri");
@@ -404,6 +403,7 @@ else{
                 }
                 echo "<h1>Rimossi ".strval($dupes)." duplicati!</h1>";
                 break;
+            }
         }
         else{
             echo '<h1>Console di amministrazione BiblioDB</h1>';
