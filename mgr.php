@@ -346,7 +346,7 @@ else{
                     //Elabora LBIF
                     echo "<h1>Importazione LBIF</h1><h2>Libri aggiunti:\n<ul>";
                     $lbif=json_decode(file_get_contents($_FILES["db"]["tmp_name"]));
-                    foreach($lbif as $isbn, $dati){
+                    foreach($lbif as $isbn=>$dati){
                         $tit=$dati[0];
                         $aut=$dati[1];
                         $pos=$dati[2];
