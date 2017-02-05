@@ -282,7 +282,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'pos':
-							$qry='SELECT DISTINCT Posizione FROM Libri';
+							$qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
 							$stmt = $file_db->prepare($qry);
 							$ricerca="%".$_GET['q']."%";
 							$stmt->execute();

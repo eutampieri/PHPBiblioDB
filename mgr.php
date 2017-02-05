@@ -206,7 +206,7 @@ else{
                 echo '<form method="post" action="?mode=scatola">Origine:<div data-role="fieldcontain" data-controltype="selectmenu">
                     <select name="s">
                     ';
-                $qry='SELECT DISTINCT Posizione FROM Libri';
+                $qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
                 $stmt = $database->prepare($qry);
                 $stmt->execute();
                 $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -320,7 +320,7 @@ else{
                 }
                 else{
                     echo "<h1>Seleziona la posizione</h1>";
-                    $qry='SELECT DISTINCT Posizione FROM Libri';
+                    $qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
                     $stmt = $database->prepare($qry);
                     $stmt->execute();
                     $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
