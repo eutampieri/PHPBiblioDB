@@ -25,7 +25,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
                 header("Location: mgr.php");
             }
             else{
-                header("Location: index.php?error=Password+errata+".hash("sha256",$_POST["password"]).'+'.$utenti[0]["Password"]."&mode=login");
+                header("Location: index.php?error=Password+errata";
             }
         }
         else{
@@ -155,6 +155,11 @@ else{
                 <li data-theme="a">
                     <a href="?mode=modifica" data-transition="slide">
                         Modifica voce
+                    </a>
+                </li>
+                <li data-theme="a">
+                    <a href="?mode=lbif" data-transition="slide">
+                        Importazione file LBIF
                     </a>
                 </li>
                 <li data-theme="a">
@@ -333,6 +338,22 @@ else{
                             echo '<a href="?mode=modifica&pos='.urlencode($s).'" class="ui-btn">'.$s.'</a>'."\n";
                         }
                     }
+                }
+                break;
+            case "lbif":
+                //Importazione File LBIF
+                if(isset($_POST["mode"])&&$_POST["mode"]=="lbifUpload"){
+                    //Elabora LBIF
+                    echo file_get_contents($_FILES["db"]["tmp_name"]);
+                }
+                else{
+                    echo'''<h1>Carica il database dei libri</h1>
+		<form action="mgr.php?mode=lbif" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="mode" value="lbifUpload">
+			Carica il file bibliodb.json:<input type="file" name="db">
+			<input type="submit" value="Carica">
+		</form>
+                    ''';
                 }
                 break;
             default:
