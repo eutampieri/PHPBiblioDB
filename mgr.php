@@ -163,7 +163,7 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
-                    <a href="?mode=deduplbif" data-transition="slide">
+                    <a href="?mode=dedup" data-transition="slide">
                         Rimozione duplicati
                     </a>
                 </li>
