@@ -394,7 +394,7 @@ else{
                     if(count($dups)>1){
                         for($i=1;$i<count($dups);$i++){
                             $stmt = $database->prepare("DELETE FROM Libri WHERE ID= :id");
-                            $stmt->bindParam(':i',$dups[$i]["ID"]);
+                            $stmt->bindParam(':id',$dups[$i]["ID"]);
                             $stmt->execute();
                             $dupes=$dupes+1;
                         }
