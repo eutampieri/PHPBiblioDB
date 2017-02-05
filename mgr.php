@@ -163,6 +163,11 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
+                    <a href="?mode=deduplbif" data-transition="slide">
+                        Rimozione duplicati
+                    </a>
+                </li>
+                <li data-theme="a">
                     <a href="logout.php" data-transition="slide">
                         Esci
                     </a>
@@ -374,6 +379,31 @@ else{
             default:
                 break;
             }
+            case "dedup":
+                copy("bibliodb.sqlite","bibliodb-".strval(time()).".sqlite");
+                $stmt = $database->prepare("SELECT Titolo,Autore,ISBN,Posizione FROM Libri");
+                $stmt->execute();
+                $dupes=0;
+                $libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach($libri as $libro){
+                    $stmt = $database->prepare("SELECT * FROM Libri WHERE Titolo= :t AND Autore= :a AND ISBN= :i AND Posizione=:p");
+                    $stmt->bindParam(':t',$libro["Titolo"]);
+                    $stmt->bindParam(':a',$libro["Autore"]);
+                    $stmt->bindParam(':i',$libro["ISBN"]);
+                    $stmt->bindParam(':p',$libro["Posizione"]);
+                    $stmt->execute();
+                    $dups=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if(count($dups)>1){
+                        for($i=1;$i<count($dups)$i++){
+                            $stmt = $database->prepare("DELETE FROM Libri WHERE ID= :id");
+                            $stmt->bindParam(':i',$dups[$i]["ID"]);
+                            $stmt->execute();
+                            $dupes=$dupes+1;
+                        }
+                    }
+                }
+                echo "<h1>Rimossi ".strval($dupes)." duplicati!</h1>";
+                break;
         }
         else{
             echo '<h1>Console di amministrazione BiblioDB</h1>';
