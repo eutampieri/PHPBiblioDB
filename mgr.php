@@ -383,7 +383,7 @@ else{
                 $dupes=0;
                 $libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach($libri as $libro){
-                    $stmt = $database->prepare("SELECT * FROM Libri WHERE Titolo= :t AND Autore= :a AND ISBN= :i AND Posizione=:p");
+                    $stmt = $database->prepare("SELECT * FROM Libri WHERE Titolo LIKE :t AND Autore LIKE :a AND ISBN= :i AND Posizione=:p");
                     $stmt->bindParam(':t',$libro["Titolo"]);
                     $stmt->bindParam(':a',$libro["Autore"]);
                     $stmt->bindParam(':i',$libro["ISBN"]);
