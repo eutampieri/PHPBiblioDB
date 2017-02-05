@@ -344,7 +344,7 @@ else{
                 //Importazione File LBIF
                 if(isset($_POST["mode"])&&$_POST["mode"]=="lbifUpload"){
                     //Elabora LBIF
-                    echo "<h1>Importazione LBIF</h1><h2>Libri aggiunti:\n<ul>";
+                    echo "<h1>Importazione LBIF</h1><h2>Libri aggiunti:</h2>\n<ul>";
                     $lbif=json_decode(file_get_contents($_FILES["db"]["tmp_name"]),true);
                     var_dump($lbif);
                     foreach($lbif as $isbn=>$dati){
@@ -352,7 +352,7 @@ else{
                         $aut=$dati[1];
                         $pos=$dati[2];
                         $qry="INSERT INTO Libri VALUES (:id, :isbn, :titolo, :aut, :pos, :disp, :dp, :own)";
-				        $stmt = $file_db->prepare($qry);
+				        $stmt = $database->prepare($qry);
 				        $stmt->bindParam(':id',strval(uniqid("libro")));
 				        $stmt->bindParam(':isbn',$isbn);
 				        $stmt->bindParam(':titolo',$tit);
