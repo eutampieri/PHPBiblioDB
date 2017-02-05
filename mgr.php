@@ -347,12 +347,12 @@ else{
                     echo file_get_contents($_FILES["db"]["tmp_name"]);
                 }
                 else{
-                    echo'''<h1>Carica il database dei libri</h1>
+                    echo '<h1>Carica il database dei libri</h1>
 		            <form action="mgr.php?mode=lbif" method="POST" enctype="multipart/form-data">
 			        <input type="hidden" name="mode" value="lbifUpload">
 			        Carica il file bibliodb.json:<input type="file" name="db">
 			        <input type="submit" value="Carica">
-		            </form>''';
+		            </form>';
                 }
                 break;
             default:
