@@ -393,7 +393,7 @@ else{
                     $stmt->execute();
                     $dups=$stmt->fetchAll(PDO::FETCH_ASSOC);
                     if(count($dups)>1){
-                        for($i=1;$i<count($dups)$i++){
+                        for($i=1;$i<count($dups);$i++){
                             $stmt = $database->prepare("DELETE FROM Libri WHERE ID= :id");
                             $stmt->bindParam(':i',$dups[$i]["ID"]);
                             $stmt->execute();
