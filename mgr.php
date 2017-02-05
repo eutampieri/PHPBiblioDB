@@ -390,7 +390,6 @@ else{
                     $stmt->bindParam(':p',$libro["Posizione"]);
                     $stmt->execute();
                     $dups=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                    var_dump($dups);
                     if(count($dups)>1){
                         for($i=1;$i<count($dups);$i++){
                             $stmt = $database->prepare("DELETE FROM Libri WHERE ID= :id");
