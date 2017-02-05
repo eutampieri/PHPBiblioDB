@@ -355,7 +355,7 @@ else{
                         $tit=$dati[0];
                         $aut=$dati[1];
                         $pos=$dati[2];
-                        $qry="INSERT INTO Libri VALUES (:id, :isbn, :titolo, :aut, :pos, :disp, :dp, :own)";
+                        $qry="INSERT INTO Libri VALUES (:id, :isbn, :titolo, :aut, :pos, :disp, :dp, \"Biblioteca\")";
 				        $stmt = $database->prepare($qry);
 				        $stmt->bindParam(':id',strval(uniqid("libro")));
 				        $stmt->bindParam(':isbn',$isbn);
