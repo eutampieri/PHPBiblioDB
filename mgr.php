@@ -352,8 +352,7 @@ else{
 			        <input type="hidden" name="mode" value="lbifUpload">
 			        Carica il file bibliodb.json:<input type="file" name="db">
 			        <input type="submit" value="Carica">
-		            </form>
-                    ''';
+		            </form>''';
                 }
                 break;
             default:
