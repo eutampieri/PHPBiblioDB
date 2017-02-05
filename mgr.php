@@ -25,7 +25,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
                 header("Location: mgr.php");
             }
             else{
-                header("Location: index.php?error=Password+errata";
+                header("Location: index.php?error=Password+errata");
             }
         }
         else{
@@ -348,11 +348,11 @@ else{
                 }
                 else{
                     echo'''<h1>Carica il database dei libri</h1>
-		<form action="mgr.php?mode=lbif" method="POST" enctype="multipart/form-data">
-			<input type="hidden" name="mode" value="lbifUpload">
-			Carica il file bibliodb.json:<input type="file" name="db">
-			<input type="submit" value="Carica">
-		</form>
+		            <form action="mgr.php?mode=lbif" method="POST" enctype="multipart/form-data">
+			        <input type="hidden" name="mode" value="lbifUpload">
+			        Carica il file bibliodb.json:<input type="file" name="db">
+			        <input type="submit" value="Carica">
+		            </form>
                     ''';
                 }
                 break;
