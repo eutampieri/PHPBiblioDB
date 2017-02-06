@@ -2,7 +2,7 @@
 $file_db = new PDO('sqlite:bibliodb.sqlite');
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(isset($_GET["mode"])){
-	switch $_GET["mode"]{
+	switch ($_GET["mode"]){
 		case "time":
 			echo "#BEGIN MESSAGE#\n";
 			echo "EpochTime: ";
@@ -23,6 +23,8 @@ if(isset($_GET["mode"])){
 			$stmt->execute();
 			$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 			echo count($libri);
+			break;
+		default:
 			break;
 	}
 }
