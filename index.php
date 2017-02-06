@@ -120,8 +120,8 @@ if(!is_file("bibliodb.sqlite")){
 			</a>
 					<?php
 					$file_db = new PDO('sqlite:bibliodb.sqlite');
+					$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					if(!isset($_GET['mode'])){
-						$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 						$qry='SELECT * FROM Libri LIMIT 10';
 						$stmt = $file_db->prepare($qry);
 						$stmt->execute();
