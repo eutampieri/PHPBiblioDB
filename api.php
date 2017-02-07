@@ -1,4 +1,5 @@
 <?php
+include("res/bibliodb.php");
 $file_db = new PDO('sqlite:bibliodb.sqlite');
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(isset($_GET["mode"])){
@@ -16,6 +17,8 @@ if(isset($_GET["mode"])){
 			echo "\n";
 			echo "#END MESSAGE#\n";
 			break;
+		case "copertina":
+			echo file_get_contents(gbooks($_GET["isbn"],"copertina",urldecode($_GET["titolo"]),urlencode($_GET["autore"])));
 		case "ISBNRegistered":
 			$qry='SELECT * FROM Libri WHERE ISBN = :q';
 			$stmt = $file_db->prepare($qry);

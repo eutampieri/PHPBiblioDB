@@ -297,8 +297,8 @@ if(!is_file("bibliodb.sqlite")){
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 								foreach($libri as $libro){
 									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" onload=\"asyncImg('";
-									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
-									echo '\',\''.strval($i).'\'"></td><td>';
+									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&autore=".urlencode($libro["Autore"]);
+									echo '\',\''.strval($i).'\')"></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
