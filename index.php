@@ -297,7 +297,7 @@ if(!is_file("bibliodb.sqlite")){
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 								foreach($libri as $libro){
 									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" onload=\"asyncImg('";
-									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&autore=".urlencode($libro["Autore"]);
+									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&isbn=".$libro["ISBN"]."&autore=".urlencode($libro["Autore"]);
 									echo '\',\''.strval($i).'\')"></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
