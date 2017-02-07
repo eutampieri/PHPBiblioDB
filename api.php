@@ -18,7 +18,7 @@ if(isset($_GET["mode"])){
 			echo "#END MESSAGE#\n";
 			break;
 		case "copertina":
-			echo file_get_contents(gbooks($_GET["isbn"],"copertina",urldecode($_GET["titolo"]),urlencode($_GET["autore"])));
+			header("Location: ".gbooks($_GET["isbn"],"copertina",urldecode($_GET["titolo"]),urlencode($_GET["autore"])));
 			break;
 		case "ISBNRegistered":
 			$qry='SELECT * FROM Libri WHERE ISBN = :q';
