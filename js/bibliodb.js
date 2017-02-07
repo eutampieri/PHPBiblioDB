@@ -99,6 +99,7 @@ function checkCookie(name) {
 	}
 }
 function asyncImg(url,id){
+	alert(document.getElementById(id).src);
 	if(document.getElementById(id).src=="res/vuoto.png"){
 		document.getElementById(id).src=url;
 	}
