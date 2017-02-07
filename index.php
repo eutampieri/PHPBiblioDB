@@ -287,6 +287,7 @@ if(!is_file("bibliodb.sqlite")){
 							$ricerca="%".$_GET['q']."%";
 							$stmt->execute();
 							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
+							$i=0;
 							foreach ($scatole as $s){
 								echo "<div data-role=\"collapsible\"><h2>".$s["Posizione"]."</h2><table>";
 								$qry='SELECT * FROM Libri WHERE Posizione = :q';
@@ -295,9 +296,9 @@ if(!is_file("bibliodb.sqlite")){
 								$stmt->execute();
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 								foreach($libri as $libro){
-									echo "<tr><td><img src=\"";
+									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" onload=\"asyncImg('";
 									echo str_replace("http://","https://",gbooks($libro["ISBN"],"copertina",urlencode($libro["Titolo"]),urlencode($libro["Autore"])));
-									echo '"></td><td>';
+									echo '\',\''.strval($i).'\'"></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
@@ -306,6 +307,7 @@ if(!is_file("bibliodb.sqlite")){
 									echo $libro["Autore"];
 									echo "<br>Stato: ".statoLibro($libro["Disponibilita"],$libro["DataPrestito"]);
 									echo "</td></tr>\n";
+									$i++;
 								}
 								echo "</table></div>";}
 								break;

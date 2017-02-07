@@ -98,3 +98,6 @@ function checkCookie(name) {
 		return false;
 	}
 }
+function asyncImg(url,id){
+	document.getElementById(id).src=url;
+}

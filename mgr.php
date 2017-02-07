@@ -133,7 +133,7 @@ else{
     </style>
     </head>
     <body>
-    <div data-role="page" data-control-title="Home" id="page1"><?php error_log($username."@bibliodb.".ETgetHN().".localLan"); if($loggedIn){ echo'
+    <div data-role="page" data-control-title="Home" id="page1"><?php if($loggedIn){ echo'
         <div data-role="panel" id="panel1" data-position="left" data-display="reveal"
         data-theme="a">
         <ul data-role="listview" data-divider-theme="h" data-inset="false">
