@@ -19,6 +19,7 @@ if(isset($_GET["mode"])){
 			break;
 		case "copertina":
 			echo file_get_contents(gbooks($_GET["isbn"],"copertina",urldecode($_GET["titolo"]),urlencode($_GET["autore"])));
+			break;
 		case "ISBNRegistered":
 			$qry='SELECT * FROM Libri WHERE ISBN = :q';
 			$stmt = $file_db->prepare($qry);
