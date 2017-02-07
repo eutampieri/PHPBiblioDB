@@ -99,7 +99,9 @@ function checkCookie(name) {
 	}
 }
 function asyncImg(url,id){
-	document.getElementById(id).src=url;
+	if(document.getElementById(id).src=="res/vuoto.png"){
+		document.getElementById(id).src=url;
+	}
 }
 function loadBlock(a,b){
 	for(var i=parseInt(a);i<=parseInt(b);i++){
