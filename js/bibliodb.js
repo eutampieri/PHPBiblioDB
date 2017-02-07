@@ -105,5 +105,7 @@ function loadBlock(a,b){
 	for(var i=parseInt(a);i<=parseInt(b);i++){
 		var url=document.getElementById(i.toString()).dataset.url;
 		asyncImg(url,i.toString());
+		alert(i.toString());
+		alert(url);
 	}
 }
