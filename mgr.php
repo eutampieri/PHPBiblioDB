@@ -133,7 +133,7 @@ else{
         <ul data-role="listview" data-divider-theme="h" data-inset="false">
             <li data-role="list-divider" role="heading">
                 BiblioDB Manager
-            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($utente."@bibliodb.".$getHostName.".localLan").'?d=identicon&s=400">
+            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($utente."@bibliodb.".$ETgetHN.".localLan").'?d=identicon&s=400">
             <br><b>'.$username.'</b>
                 <!--li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">

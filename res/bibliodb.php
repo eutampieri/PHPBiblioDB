@@ -1,5 +1,5 @@
 <?php
-function getHostName(){
+function ETgetHN(){
 	$hostname = gethostname();
 	if(!$hostname) $hostname = php_uname('n');
 	if(!$hostname) $hostname = getenv('HOSTNAME'); 
