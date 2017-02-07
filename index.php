@@ -294,7 +294,7 @@ if(!is_file("bibliodb.sqlite")){
 								$stmt->bindParam(':q',$s["Posizione"]);
 								$stmt->execute();
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
-								echo "<div data-role=\"collapsible\" onclick=\"loadBlock('".strval($i)."','".strval($i+count($libri))."><h2>".$s["Posizione"]."</h2><table>";
+								echo "<div data-role=\"collapsible\" onclick=\"loadBlock('".strval($i)."','".strval($i+count($libri))."')\"><h2>".$s["Posizione"]."</h2><table>";
 								foreach($libri as $libro){
 									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" data-url=\"";
 									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&isbn=".$libro["ISBN"]."&autore=".urlencode($libro["Autore"]);
