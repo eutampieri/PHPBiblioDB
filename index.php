@@ -289,16 +289,16 @@ if(!is_file("bibliodb.sqlite")){
 							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							$i=0;
 							foreach ($scatole as $s){
-								echo "<div data-role=\"collapsible\"><h2>".$s["Posizione"]."</h2><table>";
 								$qry='SELECT * FROM Libri WHERE Posizione = :q';
 								$stmt = $file_db->prepare($qry);
 								$stmt->bindParam(':q',$s["Posizione"]);
 								$stmt->execute();
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
+								echo "<div data-role=\"collapsible\" onclick=\"loadBlock('".strval($i)."','".strval($i+count($libri))."><h2>".$s["Posizione"]."</h2><table>";
 								foreach($libri as $libro){
-									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" onload=\"asyncImg('";
+									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\" data-url=\"";
 									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&isbn=".$libro["ISBN"]."&autore=".urlencode($libro["Autore"]);
-									echo '\',\''.strval($i).'\')"></td><td>';
+									echo '"></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
