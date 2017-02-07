@@ -133,13 +133,13 @@ else{
     </style>
     </head>
     <body>
-    <div data-role="page" data-control-title="Home" id="page1"><?php error_log($utente."@bibliodb.".$ETgetHN.".localLan"); if($loggedIn){ echo'
+    <div data-role="page" data-control-title="Home" id="page1"><?php error_log($username."@bibliodb.".ETgetHN().".localLan"); if($loggedIn){ echo'
         <div data-role="panel" id="panel1" data-position="left" data-display="reveal"
         data-theme="a">
         <ul data-role="listview" data-divider-theme="h" data-inset="false">
             <li data-role="list-divider" role="heading">
                 BiblioDB Manager
-            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($utente."@bibliodb.".$ETgetHN.".localLan").'?d=identicon&s=400">
+            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($username."@bibliodb.".ETgetHN().".localLan").'?d=identicon&s=400">
             <br><b>'.$username.'</b>
                 <!--li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">
