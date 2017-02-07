@@ -257,9 +257,9 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'posizione':
-							$qry='SELECT * FROM Libri WHERE Posizione = :q';
+							$qry='SELECT * FROM Libri WHERE Posizione LIKE :q';
 							$stmt = $file_db->prepare($qry);
-							$ricerca="%".$_GET['q']."%";
+							$ricerca= str_replace("*","%",$_GET['q']);
 							$stmt->bindParam(':q',$ricerca);
 							$stmt->execute();
 							$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);

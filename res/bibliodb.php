@@ -1,5 +1,13 @@
 <?php
-
+function getHostName(){
+	$hostname = gethostname();
+	if(!$hostname) $hostname = php_uname('n');
+	if(!$hostname) $hostname = getenv('HOSTNAME'); 
+	if(!$hostname) $hostname = trim(`hostname`); 
+	if(!$hostname) $hostname = exec('echo $HOSTNAME');
+	if(!$hostname) $hostname = preg_replace('#^\w+\s+(\w+).*$#', '$1', exec('uname -a'));
+	return $hostname;
+}
 function get_http_response_code($domain1)
 {
 	$headers = get_headers($domain1);

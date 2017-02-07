@@ -51,10 +51,12 @@ if(isset($_COOKIE['token'])){
         $stmt = $database->prepare($qry);
         $stmt->bindParam(':u',$sess["Utente"]);
         $stmt->execute();
-        $role=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Master"];
+        $udata=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+        $role=$udata["Master"];
         if($role=="1"){
             if($_SERVER['REMOTE_ADDR']==$sess["IP"]){
                 $loggedIn=true;
+                $username=$udata["Utente"];
                 //Prolungare la durata della sessione
             }
             else{
@@ -131,7 +133,8 @@ else{
         <ul data-role="listview" data-divider-theme="h" data-inset="false">
             <li data-role="list-divider" role="heading">
                 BiblioDB Manager
-            </li>
+            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($utente."@bibliodb.".$getHostName.".localLan")'?d=identicon&s=400">
+            <br><b>'.$username.'</b>
                 <!--li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">
                         Aggiungi titolo
