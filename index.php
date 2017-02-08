@@ -298,7 +298,7 @@ if(!is_file("bibliodb.sqlite")){
 								foreach($libri as $libro){
 									echo "<tr><td><img id=".strval($i)." src=\"res/vuoto.png\"> <span id=\"url".strval($i).'" class="nascosto">';
 									echo "api.php?mode=copertina&titolo=".urlencode($libro["Titolo"])."&isbn=".$libro["ISBN"]."&autore=".urlencode($libro["Autore"]);
-									echo '"></span></td><td>';
+									echo '</span></td><td>';
 									echo "ISBN: ";
 									echo $libro["ISBN"];
 									echo "<br>Titolo: ";
