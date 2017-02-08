@@ -105,7 +105,7 @@ function asyncImg(url,id){
 }
 function loadBlock(a,b){
 	for(var i=parseInt(a);i<=parseInt(b);i++){
-		var url=decodeURIComponent(document.getElementById("url"+i.toString()).innerHTML).replace("&amp;","&");
+		var url=decodeURIComponent(document.getElementById("url"+i.toString()).innerHTML).replace(/&amp;/g,"&");
 		asyncImg(url,i.toString());
 	}
 }
