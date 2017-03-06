@@ -123,7 +123,7 @@ function checkDigitEAN13($ean){
 	$ean=strval($ean);
 	$count=1;
 	$chkn=0;
-	foreach(str_split($ean) as $c){:
+	foreach(str_split($ean) as $c){
 		if ($count%2==0){
 			$chkn=$chkn+intval($c)*3;
 		}
