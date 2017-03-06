@@ -119,7 +119,7 @@ function gbooks($isbn, $mode, $tit, $aut)
 		}
 	}
 }
-function checkDigitEAN13(ean){
+function checkDigitEAN13($ean){
 	$ean=strval($ean)
 	$count=1
 	$chkn=0
