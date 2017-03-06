@@ -69,6 +69,7 @@ for r,sdfg in arr.items():
 	if len(r)==13 and r[0]=="2":
 		if int(base)<int(r[:-1]):
 			base=r[:-1]
+print base
 base=int(base)+1
 isbn=""
 if path.isfile("libri.lbif"):
