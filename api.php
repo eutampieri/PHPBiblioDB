@@ -59,9 +59,9 @@ if(isset($_GET["mode"])){
 			else{
 				$max=0;
 				foreach($rcn as $r=>$lsdjnhjlsdnh){
-					error_log(substr($r,1,-1));
+					error_log(ltrim(substr($r,1,-1),"0");
 					if(intval(substr($r,1,-1))>$max){
-						$max=intval(substr($r,1,-1));
+						$max=intval(ltrim(substr($r,1,-1),"0"));
 					}
 				}
 				error_log($max);
