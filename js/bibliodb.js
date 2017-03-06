@@ -66,7 +66,20 @@ function bookCheckISBN(){
 	isbn=document.getElementById("ISBN").value;
 	if(isbn=="rcn"){
 		document.getElementById("ISBN").value=getUrl(baseDir()+"api.php?mode=rcn");
+		return 0;
 	}
+	var titolo=getUrl(baseDir()+"api.php?mode=titolo&isbn="+isbn);
+	if(titolo=="Nessun dato"){
+		document.getElementById('titolo').focus();
+	}
+	else{
+		document.getElementById('titolo').value=titolo;
+		var autore=getUrl(baseDir()+"api.php?mode=autore&isbn="+isbn);
+		document.getElementById('autore').value=autore;
+		document.getElementById('posizione').focus();
+	}
+	//##########################################
+	//CONTROLLO RCN quando si salva
 }
 function generateUUID() {
 	var d = new Date().getTime();
