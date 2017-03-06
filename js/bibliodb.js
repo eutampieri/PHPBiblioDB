@@ -59,8 +59,8 @@ function getOS(){
 }
 function baseDir(){
 	var wholeURL=location.protocol+"//"+window.location.hostname+document.location.pathname.replace("index.php","");
-	var pg = window.location.pathname.substring(sPath.lastIndexOf('/')+1 );
-	var qry = window.location.search.substring(sPath.lastIndexOf('/')+1 );
+	var pg = window.location.pathname.substring(window.location.search.lastIndexOf('/')+1 );
+	var qry = window.location.search.substring(window.location.search.lastIndexOf('/')+1 );
 	return wholeURL.replace(pg+qry);
 }
 function bookCheckISBN(){
