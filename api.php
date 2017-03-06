@@ -38,9 +38,9 @@ if(isset($_GET["mode"])){
 			if(!is_file("rcn.json")){
 				file_put_contents("rcn.json","{}");
 			}
+			$rcn=json_decode(file_get_contents("rcn.json"),true);
 			header("Content-type:text/plain");
 			if(isset($_GET['ean'])){
-				$rcn=json_decode(file_get_contents("rcn.json"),true);
 				$esiste=true;
 				if(isset($rcn[$_GET['ean']])){
 					echo "Registrato";
