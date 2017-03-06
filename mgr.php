@@ -416,6 +416,7 @@ else{
                 echo "<h1>Rimossi ".strval($dupes)." duplicati!</h1>";
                 break;
             case 'add':
+                error_log(file_get_contents("mgrpages/batchBook.html"));
                 echo file_get_contents("mgrpages/batchBook.html");
                 echo "ciao";
                 break;
