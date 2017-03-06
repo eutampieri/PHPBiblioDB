@@ -119,3 +119,24 @@ function gbooks($isbn, $mode, $tit, $aut)
 		}
 	}
 }
+function checkDigitEAN13(ean){
+	$ean=strval($ean)
+	$count=1
+	$chkn=0
+	foreach(str_split($ean) as $c{:
+		if ($count%2==0){
+			$chkn=$chkn+intval($c)*3;
+		}
+		else{
+			$chkn=$chkn+intval($c)*1;
+		}
+		$count=$count+1;
+	}
+	if ($chkn%10==0){
+		$chkn=0;
+	}
+	else{
+		$chkn=10-$chkn%10;
+	}
+	return $ean+str($chkn);
+}

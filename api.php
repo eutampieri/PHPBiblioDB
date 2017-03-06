@@ -59,12 +59,17 @@ if(isset($_GET["mode"])){
 			else{
 				$max=0;
 				foreach($rcn as $r=>$lsdjnhjlsdnh){
-					echo strval(intval(substr($r,1)))."\n";
-					if(intval($r)>$max){
-						$max=intval($r);
+					if(intval(substr($r,1,-1))>$max){
+						$max=intval(substr($r,1,-1));
 					}
 				}
-				echo $max;
+				$max=strval($max);
+				$rcn="2";
+				for($i=0;$i<11-count($max);$i++){
+					$rcn=$rcn."0";
+				}
+				$rcn=checkDigitEAN13($rcn.$max);
+				echo $rcn;
 			}
 		default:
 			break;
