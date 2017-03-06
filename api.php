@@ -60,8 +60,9 @@ if(isset($_GET["mode"])){
 				$max=0;
 				foreach($rcn as $r=>$lsdjnhjlsdnh){
 					error_log(ltrim(substr($r,1,-1),"0"));
-					if(intval(substr($r,1,-1))>$max){
+					if(intval(ltrim(substr($r,1,-1),"0"))>$max){
 						$max=intval(ltrim(substr($r,1,-1),"0"));
+						error_log("Max: ".strval($max));
 					}
 				}
 				error_log($max);
