@@ -63,6 +63,7 @@ if(isset($_GET["mode"])){
 						$max=intval(substr($r,1,-1));
 					}
 				}
+				error_log($max);
 				$max=strval($max);
 				$rcn="2";
 				for($i=0;$i<11-count($max);$i++){
