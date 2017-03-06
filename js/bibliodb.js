@@ -57,6 +57,12 @@ function getOS(){
 		return getMobileOS()
 	}
 }
+function bookCheckISBN(){
+	isbn=document.getElementById("ISBN").value;
+	if(isbn=="rcn"){
+		document.getElementById("ISBN").value="Qui ci va l'RCN";
+	}
+}
 function generateUUID() {
 	var d = new Date().getTime();
 	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

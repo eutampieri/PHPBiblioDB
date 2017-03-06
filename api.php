@@ -20,6 +20,12 @@ if(isset($_GET["mode"])){
 		case "copertina":
 			header("Location: ".str_replace("http://","https://",gbooks($_GET["isbn"],"copertina",urldecode($_GET["titolo"]),urlencode($_GET["autore"]))));
 			break;
+		case "titolo":
+			echo gbooks($_GET["isbn"],"titolo",urldecode($_GET["titolo"]),urlencode($_GET["autore"]));
+			break;
+		case "autore":
+			echo gbooks($_GET["isbn"],"autore",urldecode($_GET["titolo"]),urlencode($_GET["autore"]));
+			break;
 		case "ISBNRegistered":
 			$qry='SELECT * FROM Libri WHERE ISBN = :q';
 			$stmt = $file_db->prepare($qry);
@@ -49,6 +55,15 @@ if(isset($_GET["mode"])){
 						echo "Disponibile";
 					}
 				}
+			}
+			else{
+				$max=0;
+				foreach($rcn as $r){
+					if(intval($r)>$max){
+						$max=intval($r);
+					}
+				}
+				echo $max
 			}
 		default:
 			break;
