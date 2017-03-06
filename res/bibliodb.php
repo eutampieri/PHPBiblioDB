@@ -138,5 +138,5 @@ function checkDigitEAN13($ean){
 	else{
 		$chkn=10-$chkn%10;
 	}
-	return $ean+str($chkn);
+	return $ean.strval($chkn);
 }
