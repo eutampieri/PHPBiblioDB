@@ -59,14 +59,11 @@ if(isset($_GET["mode"])){
 			else{
 				$max=0;
 				foreach($rcn as $r=>$lsdjnhjlsdnh){
-					error_log(ltrim(substr($r,1,-1),"0"));
 					if(intval(ltrim(substr($r,1,-1),"0"))>$max){
 						$max=intval(ltrim(substr($r,1,-1),"0"));
-						error_log("Max: ".strval($max));
 					}
 				}
-				error_log($max);
-				$max=strval($max);
+				$max=strval($max+1);
 				$rcn="2";
 				for($i=0;$i<11-count($max);$i++){
 					$rcn=$rcn."0";
