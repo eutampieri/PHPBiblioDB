@@ -177,6 +177,11 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
+                    <a href="?mode=add" data-transition="slide">
+                        Aggiungi libri
+                    </a>
+                </li>
+                <li data-theme="a">
                     <a href="logout.php" data-transition="slide">
                         Esci
                     </a>
@@ -410,6 +415,8 @@ else{
                 }
                 echo "<h1>Rimossi ".strval($dupes)." duplicati!</h1>";
                 break;
+            case 'add':
+                echo file_get_contents("mgrpages/batchBook.html");
             default:
                 break;
             }

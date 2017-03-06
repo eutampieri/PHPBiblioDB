@@ -28,6 +28,28 @@ if(isset($_GET["mode"])){
 			$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
 			echo count($libri);
 			break;
+		case 'rcn':
+			if(!is_file("rcn.json")){
+				file_put_contents("rcn.json","{}");
+			}
+			header("Content-type:text/plain");
+			if(isset($_GET['ean'])){
+				$rcn=json_decode(file_get_contents("rcn.json"),true);
+				$esiste=true;
+				if(isset($rcn[$_GET['ean']])){
+					echo "Registrato";
+				}
+				else{
+					if($_GET["register"]=="true"){
+						echo "Aggiunto";
+						$rcn[$_GET['ean']]=true;
+						file_put_contents("rcn.json", json_encode($rcn));
+					}
+					else{
+						echo "Disponibile";
+					}
+				}
+			}
 		default:
 			break;
 	}
