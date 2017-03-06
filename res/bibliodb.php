@@ -84,9 +84,22 @@ function gbooks($isbn, $mode, $tit, $aut)
 					if ($mode == "titolo") {
 						return $info["title"];
 					}
-					else
-					if ($mode == "autore") {
-						return $info["authors"];
+					else if ($mode == "autore") {
+						if(is_array($info["authors"])){
+			                $out="";
+			                for ($i=0;$i<count($info["authors"]);$i++){
+				                if($i==count($info["authors"])-1){
+				                    $out=$out.$info["authors"][$i];
+    			        	    }
+			        	        else{
+		        		            $out=$out.$info["authors"][$i].", ";
+		        		        }
+		    	            }
+			                return $out;
+			            }
+			            else{
+			                return $info["authors"];
+			            }
 					}
 				}
 			}
