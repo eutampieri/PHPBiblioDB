@@ -63,7 +63,7 @@ if(isset($_GET["mode"])){
 						$max=intval($r);
 					}
 				}
-				echo $max
+				echo $max;
 			}
 		default:
 			break;
