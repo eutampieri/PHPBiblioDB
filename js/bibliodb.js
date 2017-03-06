@@ -57,10 +57,16 @@ function getOS(){
 		return getMobileOS()
 	}
 }
+function baseDir(){
+	var wholeURL=location.protocol+"//"+window.location.hostname+document.location.pathname.replace("index.php","");
+	var pg = window.location.pathname.substring(sPath.lastIndexOf('/')+1 );
+	var qry = window.location.search.substring(sPath.lastIndexOf('/')+1 );
+	return wholeURL.replace(pg+qry);
+}
 function bookCheckISBN(){
 	isbn=document.getElementById("ISBN").value;
 	if(isbn=="rcn"){
-		document.getElementById("ISBN").value="Qui ci va l'RCN";
+		document.getElementById("ISBN").value=getUrl(baseDir()+"api.php?mode=rcn");
 	}
 }
 function generateUUID() {
