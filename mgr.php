@@ -417,6 +417,7 @@ else{
                 break;
             case 'add':
                 echo file_get_contents("mgrpages/batchBook.html");
+                break;
             default:
                 break;
             }
