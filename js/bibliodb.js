@@ -63,10 +63,11 @@ function baseDir(){
 	return wholeURL.replace(pg,'');
 }
 function bookCheckISBN(){
-	isbn=document.getElementById("ISBN").value;
+	var isbn=document.getElementById("ISBN").value;
 	if(isbn=="rcn"){
 		document.getElementById("ISBN").value=getUrl(baseDir()+"api.php?mode=rcn");
-		return 0;
+		document.getElementById('titolo').focus();
+		isbn=document.getElementById("ISBN").value;
 	}
 	var titolo=getUrl(baseDir()+"api.php?mode=titolo&isbn="+isbn);
 	if(titolo=="Nessun dato"){
