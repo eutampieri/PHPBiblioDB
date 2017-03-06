@@ -58,7 +58,7 @@ if(isset($_GET["mode"])){
 			}
 			else{
 				$max=0;
-				foreach($rcn as $r){
+				foreach($rcn as $r=>$lsdjnhjlsdnh){
 					echo $r;
 					if(intval($r)>$max){
 						$max=intval($r);
