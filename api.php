@@ -65,7 +65,7 @@ if(isset($_GET["mode"])){
 				}
 				$max=strval($max+1);
 				$rcn="2";
-				for($i=0;$i<11-count($max);$i++){
+				for($i=0;$i<11-strlen($max);$i++){
 					$rcn=$rcn."0";
 				}
 				$rcn=checkDigitEAN13($rcn.$max);
