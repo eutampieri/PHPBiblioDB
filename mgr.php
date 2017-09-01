@@ -1,6 +1,6 @@
 <?php
 include("res/bibliodb.php");
-$DURATA_SESSIONE=860
+$DURATA_SESSIONE=860;
 if(isset($_POST['user'])&&isset($_POST['password'])){
     $database = new PDO('sqlite:bibliodb.sqlite');
     $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
