@@ -471,7 +471,7 @@ EOF;
                 $stmt->bindParam(':tk',$_COOKIE['token']);
                 $stmt->execute();
                 $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
-                $qry="SELECT Token, IP From Sessioni WHERE Utente = :u ORDER BY Scadenza DESC LIMIT 1;"
+                $qry="SELECT Token, IP From Sessioni WHERE Utente = :u ORDER BY Scadenza DESC LIMIT 1;";
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':u',$sess['Utente']);
                 $stmt->execute();
