@@ -153,3 +153,27 @@ function checkDigitEAN13($ean){
 	}
 	return $ean.strval($chkn);
 }
+function safeIP() {
+    $ipaddress = '';
+	if (isset($_SERVER["HTTP_CF_CONNECTING_IP"]))
+        $ipaddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
+    else if (isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
+function idtoepoch($id, $offset=0){
+	//$offset--;
+	return hexdec(substr($id,$offset,-5));
+}

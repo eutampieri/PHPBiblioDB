@@ -1,5 +1,6 @@
 <?php
 include("res/bibliodb.php");
+$DURATA_SESSIONE=860
 if(isset($_POST['user'])&&isset($_POST['password'])){
     $database = new PDO('sqlite:bibliodb.sqlite');
     $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -13,15 +14,15 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
             if(password_verify($_POST["password"],$utenti[0]["Password"])){
 				$qry='INSERT INTO Sessioni VALUES (:token, :ip, :scadenza, :utente)';
                 $token=strval(uniqid("sess"));
-                $scadenza=date("Y-m-d H:i:s",time()+860);
-                $ip=$_SERVER['REMOTE_ADDR'];
+                $scadenza=date("Y-m-d H:i:s",time()+$DURATA_SESSIONE);
+                $ip=safeIP();
 				$stmt = $database->prepare($qry);
                 $stmt->bindParam(':token',$token);
                 $stmt->bindParam(':ip',$ip);
                 $stmt->bindParam(':scadenza',$scadenza);
                 $stmt->bindParam(':utente',$_POST["user"]);
 				$stmt->execute();
-                setcookie("token",$token, time()+860);
+                setcookie("token",$token, time()+$DURATA_SESSIONE);
                 header("Location: mgr.php");
             }
             else{
@@ -54,7 +55,7 @@ if(isset($_COOKIE['token'])){
         $udata=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
         $role=$udata["Master"];
         if($role=="1"){
-            if($_SERVER['REMOTE_ADDR']==$sess["IP"]){
+            if(safeIP()==$sess["IP"]){
                 $loggedIn=true;
                 $username=$udata["Utente"];
                 //Prolungare la durata della sessione
@@ -182,6 +183,11 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
+                    <a href="?mode=accountutente" data-transition="slide">
+                        Gestisci account
+                    </a>
+                </li>
+                <li data-theme="a">
                     <a href="logout.php" data-transition="slide">
                         Esci
                     </a>
@@ -223,6 +229,36 @@ else{
             $stmt->bindParam(':isbn',$_POST['isbn']);
             $stmt->execute();
             echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
+        }
+        else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
+            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione, Proprietario) VALUES(:id, :isbn, :tit, :aut, :pos, "Biblioteca")';
+            $stmt = $database->prepare($qry);
+            $id=strval(uniqid("libro"));
+            $stmt->bindParam(':id',$id);
+            $stmt->bindParam(':tit',$_POST['tit']);
+            $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':pos',$_POST['pos']);
+            $stmt->bindParam(':isbn',$_POST['isbn']);
+            $stmt->execute();
+            echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
+        }
+        else if(isset($_POST['mode'])&&$_POST['mode']=='cambiopwd'){
+            $qry='SELECT * FROM Sessioni WHERE Token = :tk';
+            $stmt = $database->prepare($qry);
+            $stmt->bindParam(':tk',$_COOKIE['token']);
+            $stmt->execute();
+            $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            $qry='SELECT * FROM Utenti WHERE Utente = :u';
+            $stmt = $database->prepare($qry);
+            $stmt->bindParam(':u',$sess["Utente"]);
+            $stmt->execute();
+            $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(password_verify($_POST["oldpwd"],$utenti[0]["Password"])){
+                $qry='UPDATE UTENTI SET Password = :p WHERE Utente = :u';
+                $stmt->bindParam(':d',password_hash($_POST["password"], PASSWORD_DEFAULT));
+                $stmt->bindParam(':u',$sess["Utente"]);
+			    $stmt->execute();
+            }
         }
         if(isset($_GET['mode'])){
             switch($_GET['mode']){
@@ -415,6 +451,32 @@ else{
                     }
                 }
                 echo "<h1>Rimossi ".strval($dupes)." duplicati!</h1>";
+                break;
+            case 'accountutente':
+                echo <<<EOF
+                <h2>Gestione Account</h2>
+                <h3>Cambio password</h3>
+                <form action=\"mgr.php\" method=\"POST\">";
+                    <input type="hidden" name"mode" value="cambiopwd">
+                    Vecchia password: <input type="password" name="oldpwd">
+                    Password: <input id="pwd1" type="password" name="password">
+			        Reimmetti la password: <input type="password" id="pwd2" onkeyup="check()">
+			        <p id="mismatch" class="nascosto">Le password non corrispondono!</p>
+			        <input id="pwdbtn" type="submit" value="Salva">
+                </form>
+                <h3>Ultimo accesso</h3>
+EOF;
+                $qry='SELECT * FROM Sessioni WHERE Token = :tk';
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':tk',$_COOKIE['token']);
+                $stmt->execute();
+                $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+                $qry="SELECT Token, IP From Sessioni WHERE Utente = :u ORDER BY Scadenza DESC LIMIT 1;"
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':u',$sess['Utente']);
+                $stmt->execute();
+                $sessDta=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+                echo date("d/m/y H:i:s",idtoepoch($sessDta["token"], 3));
                 break;
             default:
                 break;

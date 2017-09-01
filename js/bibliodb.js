@@ -134,3 +134,15 @@ function loadBlock(a,b){
 		asyncImg(url,i.toString());
 	}
 }
+function check(){
+	var a=document.getElementById("pwd1").value;
+	var b=document.getElementById("pwd2").value;
+	if(a!=b){
+		document.getElementById("mismatch").className="mismatch";
+		document.getElementById("pwdbtn").disabled=true;
+	}
+	else{
+		document.getElementById("mismatch").className="nascosto";
+		document.getElementById("pwdbtn").disabled=false;
+	}
+}

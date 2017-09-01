@@ -61,20 +61,6 @@ else{
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
 	<script src="js/sha512.js"></script>
 	<script src="js/bibliodb.js"></script>
-	<script>
-		function check(){
-			var a=document.getElementById("pwd1").value;
-			var b=document.getElementById("pwd2").value;
-			if(a!=b){
-				document.getElementById("mismatch").className="mismatch";
-				document.getElementById("pwdbtn").disabled=true;
-			}
-			else{
-				document.getElementById("mismatch").className="nascosto";
-				document.getElementById("pwdbtn").disabled=false;
-			}
-		}
-	</script>
 	<style>
 	.mismatch{
 		color:#E80E0C;

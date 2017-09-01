@@ -112,3 +112,5 @@ RCN.txt
 tags
 .vscode/*
 chiave.txt
+*.lbif
+*.bak
