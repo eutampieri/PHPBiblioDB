@@ -479,7 +479,7 @@ EOF;
                 $stmt->execute();
                 foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $sessDta){
                     $sessGeoIp=geoIP($sessDta["IP"]);
-                    echo "<tr><td><img class=\"flag\" src=\"api.php?mode=flag&country=".$sessGeoIp["country"]."\"></td><td>".$sessGeoIp["loc"]."</td><td>".date("d/m/y H:i:s",idtoepoch($sessDta["Token"], 4))."</td></tr>\n";
+                    echo "<tr><td><img class=\"flag\" src=\"api.php?mode=flags&country=".$sessGeoIp["country"]."\"></td><td>".$sessGeoIp["loc"]."</td><td>".date("d/m/y H:i:s",idtoepoch($sessDta["Token"], 4))."</td></tr>\n";
                 }
                 echo "</table>";
                 break;

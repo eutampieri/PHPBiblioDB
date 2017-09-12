@@ -5,7 +5,7 @@ $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(isset($_GET["mode"])){
 	switch ($_GET["mode"]){
         case "flags":
-            if(!is_dir"res/flags"){
+            if(!is_dir("res/flags")){
                 mkdir("res/flags");
             }
             if(!is_file("res/flags/flagVersion")||intval(file_get_contents("https://api.etsrv.tk/flags/version"))>intval(file_get_contents("res/flagVersion"))){
