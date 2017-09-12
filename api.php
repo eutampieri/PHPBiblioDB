@@ -11,10 +11,12 @@ if(isset($_GET["mode"])){
             if(!is_file("res/flags/flagVersion")||intval(file_get_contents("https://api.etsrv.tk/flags/version"))>intval(file_get_contents("res/flagVersion"))){
                 file_put_contents("res/flags/flagVersion", file_get_contents("https://api.etsrv.tk/flags/version"));
                 file_put_contents("res/flags/f.zip", file_get_contents("https://api.etsrv.tk/flags/flags.zip"));
+                chdir("res/flags");
                 exec("unzip f.zip");
                 unlink("f.zip");
             }
             header("Location: res/flags/bundle/".$_GET["country"].".png");
+            die();
             break;
 		case "time":
 			echo "#BEGIN MESSAGE#\n";
