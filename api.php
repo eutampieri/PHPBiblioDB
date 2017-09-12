@@ -8,8 +8,8 @@ if(isset($_GET["mode"])){
 			echo "#BEGIN MESSAGE#\n";
 			echo "EpochTime: ";
 			$dtz = new DateTimeZone('Europe/Rome');
-			$time_in_sofia = new DateTime('now', $dtz);
-			$offset=$dtz->getOffset( $time_in_sofia );
+			$localTime = new DateTime('now', $dtz);
+			$offset=$dtz->getOffset( $localTime );
 			echo time()+$offset;
 			echo "\n";
 			echo "Offset: ";

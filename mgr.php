@@ -464,19 +464,21 @@ else{
 			        <p id="mismatch" class="nascosto">Le password non corrispondono!</p>
 			        <input id="pwdbtn" type="submit" value="Salva">
                 </form>
-                <h3>Ultimo accesso</h3>
+                <h3>Ultimi 10 accessi</h3>
 EOF;
                 $qry='SELECT * FROM Sessioni WHERE Token = :tk';
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':tk',$_COOKIE['token']);
                 $stmt->execute();
                 $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
-                $qry="SELECT Token, IP From Sessioni WHERE Utente = :u ORDER BY Scadenza DESC LIMIT 1;";
+                $qry="SELECT Token, IP From Sessioni WHERE Utente = :u ORDER BY Scadenza DESC LIMIT 10;";
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':u',$sess['Utente']);
                 $stmt->execute();
-                $sessDta=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
-                echo date("d/m/y H:i:s",idtoepoch($sessDta["token"], 3));
+                foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $sessDta){
+                    echo date("d/m/y H:i:s",idtoepoch($sessDta["token"], 3));
+                    var_dump($sessDta);
+                }
                 break;
             default:
                 break;
