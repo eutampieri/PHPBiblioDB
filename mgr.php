@@ -456,7 +456,7 @@ else{
                 echo <<<EOF
                 <h2>Gestione Account</h2>
                 <h3>Cambio password</h3>
-                <form action=\"mgr.php\" method=\"POST\">";
+                <form action="mgr.php" method="POST">
                     <input type="hidden" name"mode" value="cambiopwd">
                     Vecchia password: <input type="password" name="oldpwd">
                     Password: <input id="pwd1" type="password" name="password">
