@@ -11,7 +11,8 @@ if(isset($_GET["mode"])){
                 exec("unzip f.zip");
                 unlink("f.zip");
             }
-            header("Location: res/flags/bundle/".$_GET["country"].".png");
+            header("Content-Type: image/png");
+            echo file_get_contents("res/flags/bundle/".$_GET["country"].".png");
             break;
 		case "time":
 			echo "#BEGIN MESSAGE#\n";
