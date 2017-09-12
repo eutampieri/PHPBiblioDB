@@ -262,6 +262,7 @@ else{
             $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log(json_encode($utenti));
             if(password_verify($_POST["oldpwd"],$utenti[0]["Password"])){
+                error_log("PWD OK");
                 $qry='UPDATE Utenti SET Password = :p WHERE Utente = :u';
                 $stmt->bindParam(':p',password_hash($_POST["password"], PASSWORD_DEFAULT));
                 $stmt->bindParam(':u',$sess["Utente"]);
