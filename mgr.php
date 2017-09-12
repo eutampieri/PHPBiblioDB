@@ -254,13 +254,15 @@ else{
             $stmt->bindParam(':tk',$_COOKIE['token']);
             $stmt->execute();
             $sess=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            error_log(json_encode($sess));
             $qry='SELECT * FROM Utenti WHERE Utente = :u';
             $stmt = $database->prepare($qry);
             $stmt->bindParam(':u',$sess["Utente"]);
             $stmt->execute();
             $utenti=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log(json_encode($utenti));
             if(password_verify($_POST["oldpwd"],$utenti[0]["Password"])){
-                $qry='UPDATE UTENTI SET Password = :p WHERE Utente = :u';
+                $qry='UPDATE Utenti SET Password = :p WHERE Utente = :u';
                 $stmt->bindParam(':p',password_hash($_POST["password"], PASSWORD_DEFAULT));
                 $stmt->bindParam(':u',$sess["Utente"]);
 			    $stmt->execute();
