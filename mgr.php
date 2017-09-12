@@ -131,6 +131,12 @@ else{
          display: block;
          background-color: #f0f0f0;
      }
+     .mismatch{
+		color:#E80E0C;
+	}
+        .flag{
+            height: 2em;
+        }
     </style>
     </head>
     <body>
