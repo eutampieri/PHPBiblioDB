@@ -179,8 +179,8 @@ function idtoepoch($id, $offset=0){
 }
 function geoIP($ip){
     $dati=json_decode(file_get_contents("https://geoip.nekudo.com/api/".$ip), true);
-    res=[];
-    res["loc"]=json_decode(file_get_contents("https://translate.yandex.net/api/v1.5/tr.json/translate?key=".file_get_contents("res/yandexAPIKey.txt")."&text=".rawurlencode($dati["city"].', '.$dati["country"]["name"])."&lang=en-".substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)), true)["text"][0];
+    $res=[];
+    $res["loc"]=json_decode(file_get_contents("https://translate.yandex.net/api/v1.5/tr.json/translate?key=".file_get_contents("res/yandexAPIKey.txt")."&text=".rawurlencode($dati["city"].', '.$dati["country"]["name"])."&lang=en-".substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)), true)["text"][0];
     $res["country"]=$dati["country"]["code"];
     return $res;
 }
