@@ -465,6 +465,8 @@ else{
 			        <input id="pwdbtn" type="submit" value="Salva">
                 </form>
                 <h3>Ultimi 10 accessi</h3>
+                <table>
+                    <tr><th colspan=2>Luogo</th><th>Data</th></tr>
 EOF;
                 $qry='SELECT * FROM Sessioni WHERE Token = :tk';
                 $stmt = $database->prepare($qry);
@@ -476,9 +478,10 @@ EOF;
                 $stmt->bindParam(':u',$sess['Utente']);
                 $stmt->execute();
                 foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $sessDta){
-                    echo date("d/m/y H:i:s",idtoepoch($sessDta["token"], 3));
-                    var_dump($sessDta);
+                    $sessGeoIp=geoIP($sessDta["IP"]);
+                    echo "<tr><td><img class=\"flag\" src=\"api.php?mode=flag&country=".$sessGeoIp["country"]."\"></td><td>".$sessGeoIp["loc"]."</td><td>".date("d/m/y H:i:s",idtoepoch($sessDta["Token"], 4))."</td></tr>\n";
                 }
+                echo "</table>";
                 break;
             default:
                 break;

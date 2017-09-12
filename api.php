@@ -4,6 +4,15 @@ $file_db = new PDO('sqlite:bibliodb.sqlite');
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(isset($_GET["mode"])){
 	switch ($_GET["mode"]){
+        case "flags":
+            if(!is_file("res/flags/flagVersion")||intval(file_get_contents("https://api.etsrv.tk/flags/version"))>intval(file_get_contents("res/flagVersion"))){
+                file_put_contents("res/flags/flagVersion", file_get_contents("https://api.etsrv.tk/flags/version"));
+                file_put_contents("res/flags/f.zip", file_get_contents("https://api.etsrv.tk/flags/flags.zip"));
+                exec("unzip f.zip");
+                unlink("f.zip");
+            }
+            header("Location: res/flags/bundle/".$_GET["country"].".png");
+            break;
 		case "time":
 			echo "#BEGIN MESSAGE#\n";
 			echo "EpochTime: ";

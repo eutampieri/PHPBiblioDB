@@ -1,6 +1,9 @@
 # PHP BiblioDB
 [![Build Status](https://status.continuousphp.com/git-hub/eutampieri/PHPBiblioDB?token=832985bb-3510-4872-ab91-435951b5a04a)](https://continuousphp.com/git-hub/eutampieri/PHPBiblioDB)
 
+##Requirements
+* Yandex API key, available at https://translate.yandex.com/developers/keys. It has to be put in `res/yandexAPIKey.txt`.
+
 ##DataBase structure:
 
 The database consists in an SQLITE file containing four tables.

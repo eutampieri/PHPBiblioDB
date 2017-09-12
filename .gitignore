@@ -114,3 +114,5 @@ tags
 chiave.txt
 *.lbif
 *.bak
+res/flags/*
+res/yandexAPIKey.txt
