@@ -180,7 +180,6 @@ function idtoepoch($id, $offset=0){
 function geoIP($ip){
     $dati=json_decode(file_get_contents("https://freegeoip.app/json/".$ip), true);
     $res=[];
-	error_log(json_encode($dati));
     $res["loc"]=$dati["country_name"];//;json_decode(file_get_contents("https://translate.yandex.net/api/v1.5/tr.json/translate?key=".str_replace("\r",'',str_replace("\n",'',file_get_contents("res/yandexAPIKey.txt")))."&text=".rawurlencode($dati["city"].', '.$dati["country"]["name"])."&lang=en-".substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)), true)["text"][0];
     $res["country"]=$dati["country_code"];
     return $res;
