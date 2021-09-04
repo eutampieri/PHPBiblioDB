@@ -18,7 +18,6 @@ This table contains books. It has these columns:
 * Posizione (text)
 * Disponibilita (0:in prestito, 1:disponibile)
 * DataPrestito (YYYY-MM-DD)
-* Proprietario (text)
 
 ### Utenti
 

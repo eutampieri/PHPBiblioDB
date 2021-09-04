@@ -237,7 +237,7 @@ else{
             echo "<h3>Aggiornato ".$_POST['tit'].'</h3>';
         }
         else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
-            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione, Proprietario) VALUES(:id, :isbn, :tit, :aut, :pos, "Biblioteca")';
+            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione) VALUES(:id, :isbn, :tit, :aut, :pos)';
             $stmt = $database->prepare($qry);
             $id=strval(uniqid("libro"));
             $stmt->bindParam(':id',$id);
@@ -249,7 +249,7 @@ else{
             echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
         }
         else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
-            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione, Proprietario) VALUES(:id, :isbn, :tit, :aut, :pos, "Biblioteca")';
+            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione) VALUES(:id, :isbn, :tit, :aut, :pos)';
             $stmt = $database->prepare($qry);
             $id=strval(uniqid("libro"));
             $stmt->bindParam(':id',$id);
