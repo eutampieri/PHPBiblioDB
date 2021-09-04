@@ -43,9 +43,9 @@ This table contains library users. It has theese columns:
 * Cognome (text)
 * Dati (JSON containing additional infos)
 
-##Caching
+## Caching
 To save time and load covers quickly, create a file named `covers.json` in the
-folder in wich is contained `index.php` with the following content:
+folder in which is contained `index.php` with the following content:
 ```
 {}
 ```
