@@ -10,7 +10,10 @@
 function makeDB(){
 	$file_db = new PDO('sqlite:bibliodb.sqlite');
 	$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$qry='CREATE  TABLE "Libri" ("ID" TEXT, "ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT, "Posizione" TEXT, "Disponibilita" BOOLEAN, "DataPrestito" DATETIME)';
+	$qry='CREATE  TABLE "Libri" ("ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT)';
+	$stmt = $file_db->prepare($qry);
+	$stmt->execute();
+	$qry='CREATE  TABLE "Copie" ("ID" TEXT, "ISBN" TEXT, "Posizione" TEXT, "Disponibilita" BOOLEAN, "DataPrestito" DATETIME)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
 	$qry='CREATE  TABLE "Utenti" ("Utente" TEXT, "Password" TEXT, "Master" BOOL)';

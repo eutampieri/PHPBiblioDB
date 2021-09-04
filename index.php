@@ -122,7 +122,7 @@ if(!is_file("bibliodb.sqlite")){
 					$file_db = new PDO('sqlite:bibliodb.sqlite');
 					$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					if(!isset($_GET['mode'])){
-						$qry='SELECT * FROM Libri LIMIT 10';
+						$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN LIMIT 10';
 						$stmt = $file_db->prepare($qry);
 						$stmt->execute();
 						$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -152,7 +152,7 @@ if(!is_file("bibliodb.sqlite")){
 					else{
 						switch ($_GET['mode']) {
 							case 'all':
-								$qry='SELECT * FROM Libri';
+								$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN';
 								$stmt = $file_db->prepare($qry);
 								$stmt->execute();
 								$libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -177,7 +177,7 @@ if(!is_file("bibliodb.sqlite")){
 								echo "</table>";
 									break;
 							case 'titolo':
-							$qry='SELECT * FROM Libri WHERE Titolo LIKE :q';
+							$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Titolo LIKE :q';
 							$stmt = $file_db->prepare($qry);
 							$ricerca="%".$_GET['q']."%";
 							$stmt->bindParam(':q',$ricerca);
@@ -202,7 +202,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'autore':
-							$qry='SELECT * FROM Libri WHERE Autore LIKE :q';
+							$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Autore LIKE :q';
 							$stmt = $file_db->prepare($qry);
 							$ricerca="%".$_GET['q']."%";
 							$stmt->bindParam(':q',$ricerca);
@@ -233,7 +233,7 @@ if(!is_file("bibliodb.sqlite")){
 							if(isset($_GET['ean'])){
 								$isbns=$_GET["ean"];
 							}
-							$qry='SELECT * FROM Libri WHERE ISBN = :q';
+							$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Libri.ISBN = :q';
 							$stmt = $file_db->prepare($qry);
 							$stmt->bindParam(':q',$isbns);
 							$stmt->execute();
@@ -257,7 +257,7 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'posizione':
-							$qry='SELECT * FROM Libri WHERE Posizione LIKE :q';
+							$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Posizione LIKE :q';
 							$stmt = $file_db->prepare($qry);
 							$ricerca= str_replace("*","%",$_GET['q']);
 							$stmt->bindParam(':q',$ricerca);
@@ -282,14 +282,14 @@ if(!is_file("bibliodb.sqlite")){
 							echo "</table>";
 							break;
 							case 'pos':
-							$qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
+							$qry='SELECT DISTINCT Posizione FROM Copie WHERE ORDER BY Posizione ASC';
 							$stmt = $file_db->prepare($qry);
 							$ricerca="%".$_GET['q']."%";
 							$stmt->execute();
 							$scatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
 							$i=0;
 							foreach ($scatole as $s){
-								$qry='SELECT * FROM Libri WHERE Posizione = :q';
+								$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Posizione = :q';
 								$stmt = $file_db->prepare($qry);
 								$stmt->bindParam(':q',$s["Posizione"]);
 								$stmt->execute();

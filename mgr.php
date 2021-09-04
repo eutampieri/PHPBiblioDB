@@ -229,37 +229,46 @@ else{
         $database = new PDO('sqlite:bibliodb.sqlite');
         if(isset($_POST['mode'])&&$_POST['mode']=='edit'){
             $id=$_POST['id'];
-            $qry='UPDATE Libri SET Titolo = :tit, Autore = :aut, Posizione=:pos WHERE ID = :id';
+            $qry = "SELECT ISBN FROM Copie WHERE ID = :id";
             $stmt = $database->prepare($qry);
             $stmt->bindParam(':id',$id);
+            $stmt->execute();
+            $isbn = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]["ISBN"];
+
+            $qry='UPDATE Libri SET Titolo = :tit, Autore = :aut WHERE ISBN = :isbn';
             $stmt->bindParam(':tit',$_POST['tit']);
             $stmt->bindParam(':aut',$_POST['aut']);
+            $stmt->bindParam(':isbn',$isbn);
+            $stmt->execute();
+
+            $qry = 'UPDATE Copie SET Posizione=:pos WHERE ID = :id';
+            $stmt = $database->prepare($qry);
+            $stmt->bindParam(':id',$id);
             $stmt->bindParam(':pos',$_POST['pos']);
             $stmt->execute();
             echo "<h3>Aggiornato ".$_POST['tit'].'</h3>';
         }
         else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
-            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione) VALUES(:id, :isbn, :tit, :aut, :pos)';
+            $stmt = $database->prepare("SELECT COUNT(*) AS c FROM Libri WHERE ISBN = :isbn");
+            $stmt->bindParam(":isbn", $_POST["isbn"]);
+            $stmt->execute();
+            if(intval($stmt->fetchAll(PDO::FETCH_ASSOC)[0]['c']) == 0) {
+                $qry='INSERT INTO Libri (ISBN, Titolo, Autore) VALUES(:isbn, :tit, :aut)';
+                $stmt = $database->prepare($qry);
+                $id=strval(uniqid("libro"));
+                $stmt->bindParam(':tit',$_POST['tit']);
+                $stmt->bindParam(':aut',$_POST['aut']);
+                $stmt->bindParam(':isbn',$_POST['isbn']);
+                $stmt->execute();
+            }
+            $qry='INSERT INTO Copie (ID, ISBN, Posizione) VALUES(:id, :pos)';
             $stmt = $database->prepare($qry);
             $id=strval(uniqid("libro"));
             $stmt->bindParam(':id',$id);
-            $stmt->bindParam(':tit',$_POST['tit']);
-            $stmt->bindParam(':aut',$_POST['aut']);
             $stmt->bindParam(':pos',$_POST['pos']);
             $stmt->bindParam(':isbn',$_POST['isbn']);
             $stmt->execute();
-            echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
-        }
-        else if(isset($_POST['mode'])&&$_POST['mode']=='add'){
-            $qry='INSERT INTO Libri (ID, ISBN, Titolo, Autore, Posizione) VALUES(:id, :isbn, :tit, :aut, :pos)';
-            $stmt = $database->prepare($qry);
-            $id=strval(uniqid("libro"));
-            $stmt->bindParam(':id',$id);
-            $stmt->bindParam(':tit',$_POST['tit']);
-            $stmt->bindParam(':aut',$_POST['aut']);
-            $stmt->bindParam(':pos',$_POST['pos']);
-            $stmt->bindParam(':isbn',$_POST['isbn']);
-            $stmt->execute();
+
             echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
         }
         else if(isset($_POST['mode'])&&$_POST['mode']=='cambiopwd'){
@@ -287,7 +296,7 @@ else{
                 echo '<form method="post" action="?mode=scatola">Origine:<div data-role="fieldcontain" data-controltype="selectmenu">
                     <select name="s">
                     ';
-                $qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
+                $qry='SELECT DISTINCT Posizione FROM Copie ORDER BY Posizione ASC';
                 $stmt = $database->prepare($qry);
                 $stmt->execute();
                 $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -308,12 +317,12 @@ else{
                     <input type="submit" value="Sposta"></form>';
                 if(isset($_POST['s'])&&isset($_POST['d'])){
                     echo "<table>";
-                    $qry='UPDATE Libri SET Posizione = :d WHERE Posizione = :s';
+                    $qry='UPDATE Copie SET Posizione = :d WHERE Posizione = :s';
                     $stmt = $database->prepare($qry);
                     $stmt->bindParam(':d',$_POST['d']);
                     $stmt->bindParam(':s',$_POST['s']);
                     $stmt->execute();
-                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Posizione=:d';
                     $stmt = $database->prepare($qry);
                     $stmt->bindParam(':d',$_POST['d']);
                     $stmt->execute();
@@ -340,12 +349,12 @@ else{
                 break;
             case 'elimina':
                 $i=$_GET['id'];
-                $qry='SELECT Titolo FROM Libri WHERE ID=:d';
+                $qry='SELECT Titolo FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND ID=:d';
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':d',$_GET['id']);
                 $stmt->execute();
                 $tit=$stmt->fetchAll(PDO::FETCH_ASSOC)[0]["Titolo"];
-                $qry='DELETE FROM Libri WHERE ID=:d';
+                $qry='DELETE FROM Copie WHERE ID=:d';
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':d',$_GET['id']);
                 $stmt->execute();
@@ -353,7 +362,7 @@ else{
                 break;
             case 'modifica':
                 if(isset($_GET['id'])){
-                    $qry='SELECT * FROM Libri WHERE ID=:d';
+                    $qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND ID=:d';
                     $stmt = $database->prepare($qry);
                     $stmt->bindParam(':d',$_GET['id']);
                     $stmt->execute();
@@ -380,7 +389,7 @@ else{
                 }
                 elseif(isset($_GET['pos'])){
                     echo "<table>";
-                    $qry='SELECT * FROM Libri WHERE Posizione=:d';
+                    $qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Posizione=:d';
                     $stmt = $database->prepare($qry);
                     $stmt->bindParam(':d',$_GET['pos']);
                     $stmt->execute();
@@ -402,7 +411,7 @@ else{
                 }
                 else{
                     echo "<h1>Seleziona la posizione</h1>";
-                    $qry='SELECT DISTINCT Posizione FROM Libri ORDER BY Posizione ASC';
+                    $qry='SELECT DISTINCT Posizione FROM Copie ORDER BY Posizione ASC';
                     $stmt = $database->prepare($qry);
                     $stmt->execute();
                     $lscatole=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -427,6 +436,7 @@ else{
                         $tit=$dati[0];
                         $aut=$dati[1];
                         $pos=$dati[2];
+                        //TODO
                         $qry="INSERT INTO Libri VALUES (:id, :isbn, :titolo, :aut, :pos, :disp, :dp, \"Biblioteca\")";
 				        $stmt = $database->prepare($qry);
 				        $stmt->bindParam(':id',strval(uniqid("libro")));
@@ -450,12 +460,12 @@ else{
                 break;
             case "dedup":
                 copy("bibliodb.sqlite","bibliodb-".strval(time()).".sqlite");
-                $stmt = $database->prepare("SELECT Titolo,Autore,ISBN,Posizione FROM Libri");
+                $stmt = $database->prepare("SELECT Titolo,Autore,ISBN,Posizione FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN");
                 $stmt->execute();
                 $dupes=0;
                 $libri=$stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach($libri as $libro){
-                    $stmt = $database->prepare("SELECT * FROM Libri WHERE Titolo LIKE :t AND Autore LIKE :a AND ISBN= :i AND Posizione=:p");
+                    $stmt = $database->prepare("SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN AND Titolo LIKE :t AND Autore LIKE :a AND ISBN= :i AND Posizione=:p");
                     $stmt->bindParam(':t',$libro["Titolo"]);
                     $stmt->bindParam(':a',$libro["Autore"]);
                     $stmt->bindParam(':i',$libro["ISBN"]);
@@ -464,7 +474,7 @@ else{
                     $dups=$stmt->fetchAll(PDO::FETCH_ASSOC);
                     if(count($dups)>1){
                         for($i=1;$i<count($dups);$i++){
-                            $stmt = $database->prepare("DELETE FROM Libri WHERE ID= :id");
+                            $stmt = $database->prepare("DELETE FROM Copie WHERE ID= :id");
                             $stmt->bindParam(':id',$dups[$i]["ID"]);
                             $stmt->execute();
                             $dupes=$dupes+1;

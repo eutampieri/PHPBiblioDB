@@ -11,10 +11,14 @@ The database consists in an SQLITE file containing four tables.
 ### Libri
 
 This table contains books. It has these columns:
-* ID (text)
 * ISBN (text)
 * Titolo (text)
 * Autore (text)
+### Copie
+
+This table contains copies of a book.
+* ID (text)
+* ISBN (text)
 * Posizione (text)
 * Disponibilita (0:in prestito, 1:disponibile)
 * DataPrestito (YYYY-MM-DD)
