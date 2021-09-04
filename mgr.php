@@ -510,21 +510,13 @@ EOF;
             echo '<h1>Console di amministrazione BiblioDB</h1>';
             if(!$loggedIn){
             echo'
-                <div data-role="fieldcontain" data-controltype="textinput">
-                <label for="textinput4">
-                Nome Utente
-                </label>
-                <input name="" id="textinput4" placeholder="" value="" type="text">
-                </div>
-                <div data-role="fieldcontain" data-controltype="textinput">
-                <label for="textinput3">
-                Password
-                </label>
-                <input name="" id="textinput3" placeholder="" value="" type="password"> 
-                </div>
-                <a data-role="button" onclick="login()">
-                Accedi
-                </a>';
+                <<form method="post" action="mgr.php">
+								Nome utente:
+								<input type="text" name="user">
+								Password:
+								<input type="password" name="password">
+								<input type="submit" value="Entra">
+							</form>';
             }
         }
         ?>
