@@ -179,7 +179,7 @@ else{
                         Modifica voce
                     </a>
                 </li>
-                <?php if(isset($_POST["lbif"])):?>
+                <?php if(isset($_GET["lbif"])):?>
                 <li data-theme="a">
                     <a href="?mode=lbif" data-transition="slide">
                         Importazione file LBIF
