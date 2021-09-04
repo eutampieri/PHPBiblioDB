@@ -87,21 +87,21 @@ else{
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- For non-Retina (@1× display) iPhone, iPod Touch, and Android 2.1+ devices: -->
-    <link rel="res/icons/apple-touch-icon" href="res/icons/apple-touch-icon.png"><!-- 57×57px -->
+    <link rel="apple-touch-icon" href="res/icons/apple-touch-icon.png"><!-- 57×57px -->
     <!-- For the iPad mini and the first- and second-generation iPad (@1× display) on iOS = 6: -->
-    <link rel="res/icons/apple-touch-icon" sizes="72x72" href="res/icons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="res/icons/apple-touch-icon-72x72.png">
     <!-- For the iPad mini and the first- and second-generation iPad (@1× display) on iOS = 7: -->
-    <link rel="res/icons/apple-touch-icon" sizes="76x76" href="res/icons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="res/icons/apple-touch-icon-76x76.png">
     <!-- For iPhone with @2× display running iOS = 6: -->
-    <link rel="res/icons/apple-touch-icon" sizes="114x114" href="res/icons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="res/icons/apple-touch-icon-114x114.png">
     <!-- For iPhone with @2× display running iOS = 7: -->
-    <link rel="res/icons/apple-touch-icon" sizes="120x120" href="res/icons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="res/icons/apple-touch-icon-120x120.png">
     <!-- For iPad with @2× display running iOS = 6: -->
-    <link rel="res/icons/apple-touch-icon" sizes="144x144" href="res/icons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="res/icons/apple-touch-icon-144x144.png">
     <!-- For iPad with @2× display running iOS = 7: -->
-    <link rel="res/icons/apple-touch-icon" sizes="152x152" href="res/icons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="res/icons/apple-touch-icon-152x152.png">
     <!-- For iPhone 6 Plus with @3× display: -->
-    <link rel="res/icons/apple-touch-icon" sizes="180x180" href="res/icons/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="res/icons/apple-touch-icon-180x180.png">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
     <script src="js/jquery-1.11.1.min.js"></script>
