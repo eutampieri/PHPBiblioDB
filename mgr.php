@@ -54,7 +54,7 @@ if(isset($_COOKIE['token'])){
         $stmt->execute();
         $udata=$stmt->fetchAll(PDO::FETCH_ASSOC)[0];
         $role=$udata["Master"];
-        if($role=="1"){
+        //if($role=="1"){
             if(safeIP()==$sess["IP"]){
                 $loggedIn=true;
                 $username=$udata["Utente"];
@@ -63,10 +63,10 @@ if(isset($_COOKIE['token'])){
             else{
                 header("Location: index.php?error=Login+fallito&mode=login");
             }
-        }
+        /*}
         else{
             header("Location: index.php?error=Non+autorizzato&mode=login");
-        }
+        }*/
     }
     else{
         header("Location: index.php?error=Sessione+scaduta&mode=login");
@@ -140,19 +140,19 @@ else{
     </style>
     </head>
     <body>
-    <div data-role="page" data-control-title="Home" id="page1"><?php if($loggedIn){ echo'
+    <div data-role="page" data-control-title="Home" id="page1"><?php if($loggedIn):?>
         <div data-role="panel" id="panel1" data-position="left" data-display="reveal"
         data-theme="a">
         <ul data-role="listview" data-divider-theme="h" data-inset="false">
             <li data-role="list-divider" role="heading">
                 BiblioDB Manager
-            </li><img class="avatar" src="https://www.gravatar.com/avatar/'.md5($username."@bibliodb.".ETgetHN().".localLan").'?d=identicon&s=400">
-            <br><b>'.$username.'</b>
+            </li><img class="avatar" src="https://www.gravatar.com/avatar/<?=md5($username."@bibliodb.".ETgetHN().".localLan")?>'?d=identicon&s=400">
+            <br><b><?=$username?></b>
                 <!--li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">
                         Aggiungi titolo
                     </a>
-                </li>
+                </li-->
                 <li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">
                         Presta titolo
@@ -160,9 +160,15 @@ else{
                 </li>
                 <li data-theme="a">
                     <a href="javascript:void(0);" data-transition="slide">
-                        Aggiungi Utente
+                        Rientra titolo
                     </a>
-                </li-->
+                </li>
+                <li data-theme="a">
+                    <a href="javascript:void(0);" data-transition="slide">
+                        Aggiungi iscritto
+                    </a>
+                </li>
+                <?if($role=="1"):?>
                 <li data-theme="a">
                     <a href="?mode=scatola" data-transition="slide">
                         Sposta posizione
@@ -189,6 +195,12 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
+                    <a href="javascript:void(0);" data-transition="slide">
+                        Aggiungi utente
+                    </a>
+                </li>
+                <?php endif;?>
+                <li data-theme="a">
                     <a href="?mode=accountutente" data-transition="slide">
                         Gestisci account
                     </a>
@@ -199,7 +211,7 @@ else{
                     </a>
                 </li>
             </ul>
-        </div>';}?>
+        </div><?php endif;?>
         <div data-theme="a" data-role="header" data-position="fixed"><?php if($loggedIn){ echo'
             <div id="menubutton">
                 <a data-controltype="panelbutton" data-role="button" href="#panel1" data-icon="bars" data-iconpos="left" class="ui-btn-left">
