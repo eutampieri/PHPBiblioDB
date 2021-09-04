@@ -179,11 +179,13 @@ else{
                         Modifica voce
                     </a>
                 </li>
+                <?php if(isset($_POST["lbif"])):?>
                 <li data-theme="a">
                     <a href="?mode=lbif" data-transition="slide">
                         Importazione file LBIF
                     </a>
                 </li>
+                <?php endif;?>
                 <li data-theme="a">
                     <a href="?mode=dedup" data-transition="slide">
                         Rimozione duplicati

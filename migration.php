@@ -19,7 +19,7 @@ function makeDB(){
 	$qry='CREATE  TABLE "Sessioni" ("Token" TEXT, "IP" TEXT, "Scadenza" DATETIME, "Utente" TEXT)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
-	$qry='CREATE  TABLE Iscritti (ID TEXT, RFID TEXT, Nome TEXT, Cognome TEXT, Dati TEXT)';
+	$qry='CREATE  TABLE Iscritti (ID TEXT, RFID TEXT, Nome TEXT, Cognome TEXT)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
 	$file_db=NULL;

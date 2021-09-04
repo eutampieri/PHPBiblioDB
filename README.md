@@ -41,7 +41,6 @@ This table contains library users. It has theese columns:
 * RFID (text)
 * Nome (text)
 * Cognome (text)
-* Dati (JSON containing additional infos)
 
 ## Caching
 To save time and load covers quickly, create a file named `covers.json` in the
