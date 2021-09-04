@@ -24,7 +24,7 @@ This table contains books. It has these columns:
 
 This table contains users. It has theese columns:
 * Utente (text)
-* Password (SHA-256 encoded)
+* Password (bcrypt encoded)
 * Master (bool)
 
 ### Sessioni
