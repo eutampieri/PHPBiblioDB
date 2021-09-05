@@ -255,13 +255,13 @@ else{
             if(intval($stmt->fetchAll(PDO::FETCH_ASSOC)[0]['c']) == 0) {
                 $qry='INSERT INTO Libri (ISBN, Titolo, Autore) VALUES(:isbn, :tit, :aut)';
                 $stmt = $database->prepare($qry);
-                $id=strval(uniqid("libro"));
                 $stmt->bindParam(':tit',$_POST['tit']);
                 $stmt->bindParam(':aut',$_POST['aut']);
                 $stmt->bindParam(':isbn',$_POST['isbn']);
                 $stmt->execute();
             }
-            $qry='INSERT INTO Copie (ID, ISBN, Posizione) VALUES(:id, :pos)';
+            $id=strval(uniqid("libro"));
+            $qry='INSERT INTO Copie (ID, ISBN, Posizione) VALUES(:id, :isbn, :pos)';
             $stmt = $database->prepare($qry);
             $id=strval(uniqid("libro"));
             $stmt->bindParam(':id',$id);
@@ -269,7 +269,8 @@ else{
             $stmt->bindParam(':isbn',$_POST['isbn']);
             $stmt->execute();
 
-            echo "<h3>Aggiunto ".$_POST['tit'].'</h3>';
+            echo "Aggiunto ".$_POST['tit'];
+            die();
         }
         else if(isset($_POST['mode'])&&$_POST['mode']=='cambiopwd'){
             $qry='SELECT * FROM Sessioni WHERE Token = :tk';

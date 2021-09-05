@@ -1,6 +1,30 @@
-ISBN:<input type="text" id="ISBN" onchange="bookCheckISBN()">
+<script>
+    function getField(name) {
+        return encodeURIComponent(document.getElementById(name).value);
+    }
+    async function saveBook() {
+        await fetch("mgr.php", {
+            method: "POST",
+            body: "mode=add&isbn=" + getField("ISBN") + "&tit=" + getField("titolo") + "&aut=" + getField("autore") + "&pos=" + getField("posizione"),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        })
+            .then(r => r.text())
+            .then(b => { alert(b) });
+    }
+    async function fillISBN(input) {
+        await fetch("api.php?mode=titolo&isbn=" + encodeURIComponent(input.value))
+            .then(r => r.text())
+            .then(b => { document.getElementById("titolo").value = b });
+        await fetch("api.php?mode=autore&isbn=" + encodeURIComponent(input.value))
+            .then(r => r.text())
+            .then(b => { document.getElementById("autore").value = b });
+    }
+</script>
+ISBN:<input type="text" id="ISBN" onchange="fillISBN(this)">
 Titolo:<input type="text" id="titolo">
 Autore:<input type="text" id="autore">
 Posizione:<input type="text" id="posizione">
-<input type="button" value="Salva" onclick="bookSave()">
+<input type="button" value="Salva" onclick="saveBook()">
 <!--document.getElementById('titolo').focus();"-->
