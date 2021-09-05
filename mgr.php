@@ -307,17 +307,31 @@ else{
 			$stmt->bindParam(':c',$_POST["cognome"]);
 			$stmt->execute();
         } else if(isset($_POST["mode"]) && $_POST["mode"] == "lend") {
-			$qry="UPDATE Copie SET Disponibilita = 0, UtentePrestito = :u, DataPrestito = NOW() WHERE ID=:id AND Disponibilita = 1";
-			$stmt = $database->prepare($qry);
-			$stmt->bindParam(':id',$_POST["id"]);
+            $stmt = $database->prepare("SELECT ID FROM Iscritti WHERE RFID = :u");
 			$stmt->bindParam(':u',$_POST["utente"]);
-			$stmt->execute();
+            $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(count($userId) == 0) {
+                echo "<h3>Utente non trovato</h3>";
+            } else {
+                $qry="UPDATE Copie SET Disponibilita = 0, UtentePrestito = :u, DataPrestito = NOW() WHERE ID=:id AND Disponibilita = 1";
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':id',$_POST["id"]);
+                $stmt->bindParam(':u',$userId[0]["ID"]);
+                $stmt->execute();
+            }
         } else if(isset($_POST["mode"]) && $_POST["mode"] == "return") {
-			$qry="UPDATE Copie SET Disponibilita = 1, UtentePrestito = NULL, DataPrestito = NULL WHERE ID=:id AND Disponibilita = 1 AND UtentePrestito = :u";
-			$stmt = $database->prepare($qry);
-			$stmt->bindParam(':id',$_POST["id"]);
+            $stmt = $database->prepare("SELECT ID FROM Iscritti WHERE RFID = :u");
 			$stmt->bindParam(':u',$_POST["utente"]);
-			$stmt->execute();
+            $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(count($userId) == 0) {
+                echo "<h3>Utente non trovato</h3>";
+            } else {
+			    $qry="UPDATE Copie SET Disponibilita = 1, UtentePrestito = NULL, DataPrestito = NULL WHERE ID=:id AND Disponibilita = 1 AND UtentePrestito = :u";
+                $stmt = $database->prepare($qry);
+                $stmt->bindParam(':id',$_POST["id"]);
+                $stmt->bindParam(':u',$userId[0]["ID"]);
+                $stmt->execute();
+            }
         }
         if(isset($_GET['mode'])){
             switch($_GET['mode']){
