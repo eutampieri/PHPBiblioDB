@@ -164,7 +164,7 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
-                    <a href="javascript:void(0);" data-transition="slide">
+                    <a href="?mode=addUser" data-transition="slide">
                         Aggiungi iscritto
                     </a>
                 </li>
@@ -296,6 +296,15 @@ else{
 			$stmt->bindParam(':i',$_POST["utente"]);
 			$stmt->bindParam(':d',password_hash($_POST["password"], PASSWORD_DEFAULT));
 			$stmt->bindValue(':m',isset($_POST["admin"]) ? "1" : "0");
+			$stmt->execute();
+        } else if(isset($_POST["mode"]) && $_POST["mode"] == "addUser") {
+			$qry="INSERT INTO Iscritti VALUES (:i,:r, :n, :c)";
+			$stmt = $database->prepare($qry);
+            $id = uniqid("u");
+			$stmt->bindParam(':i',id);
+			$stmt->bindParam(':r',$_POST["rfid"]);
+			$stmt->bindParam(':n',$_POST["nome"]);
+			$stmt->bindParam(':c',$_POST["cognome"]);
 			$stmt->execute();
         }
         if(isset($_GET['mode'])){
@@ -521,6 +530,18 @@ EOF;
                     echo "<tr><td><img class=\"flag\" src=\"api.php?mode=flags&country=".$sessGeoIp["country"]."\"></td><td>".$sessGeoIp["loc"]."</td><td>".date("d/m/y H:i:s",idtoepoch($sessDta["Token"], 4))."</td></tr>\n";
                 }
                 echo "</table>";
+                break;
+            case "addUser":
+                ?>
+                <h2>Aggiungi iscritto</h2>
+                <form action="mgr.php" method="POST">
+		        	<input type="hidden" name="mode" value="addUser">
+		        	Nome: <input type="text" name="nome">
+		        	Cognome: <input type="text" name="cognome">
+		        	Codice tessea: <input type="text" name="rfid">
+		        	<input id="pwdbtn" type="submit" value="Aggiungi">
+		        </form>
+                <?php
                 break;
             case "addAdmin":
                 $page = file_get_contents("confDep/zero.html");
