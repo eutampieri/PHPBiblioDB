@@ -154,12 +154,12 @@ else{
                     </a>
                 </li-->
                 <li data-theme="a">
-                    <a href="javascript:void(0);" data-transition="slide">
+                    <a href="?mode=lend" data-transition="slide">
                         Presta titolo
                     </a>
                 </li>
                 <li data-theme="a">
-                    <a href="javascript:void(0);" data-transition="slide">
+                    <a href="?mode=return" data-transition="slide">
                         Rientra titolo
                     </a>
                 </li>
@@ -309,11 +309,12 @@ else{
         } else if(isset($_POST["mode"]) && $_POST["mode"] == "lend") {
             $stmt = $database->prepare("SELECT ID FROM Iscritti WHERE RFID = :u");
 			$stmt->bindParam(':u',$_POST["utente"]);
+            $stmt->execute();
             $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if(count($userId) == 0) {
                 echo "<h3>Utente non trovato</h3>";
             } else {
-                $qry="UPDATE Copie SET Disponibilita = 0, UtentePrestito = :u, DataPrestito = NOW() WHERE ID=:id AND Disponibilita = 1";
+                $qry="UPDATE Copie SET Disponibilita = 0, UtentePrestito = :u, DataPrestito = date('now') WHERE ID=:id AND (Disponibilita = 1 OR Disponibilita IS NULL)";
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':id',$_POST["id"]);
                 $stmt->bindParam(':u',$userId[0]["ID"]);
@@ -322,11 +323,12 @@ else{
         } else if(isset($_POST["mode"]) && $_POST["mode"] == "return") {
             $stmt = $database->prepare("SELECT ID FROM Iscritti WHERE RFID = :u");
 			$stmt->bindParam(':u',$_POST["utente"]);
+            $stmt->execute();
             $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if(count($userId) == 0) {
                 echo "<h3>Utente non trovato</h3>";
             } else {
-			    $qry="UPDATE Copie SET Disponibilita = 1, UtentePrestito = NULL, DataPrestito = NULL WHERE ID=:id AND Disponibilita = 1 AND UtentePrestito = :u";
+			    $qry="UPDATE Copie SET Disponibilita = 1, UtentePrestito = NULL, DataPrestito = NULL WHERE ID=:id AND Disponibilita = 0 AND UtentePrestito = :u";
                 $stmt = $database->prepare($qry);
                 $stmt->bindParam(':id',$_POST["id"]);
                 $stmt->bindParam(':u',$userId[0]["ID"]);
@@ -577,6 +579,17 @@ EOF;
                 $page = str_replace("/a>", "/a-->", $page);
                 $page = str_replace("/p>", "/p><input name=\"admin\" type=\"checkbox\" id=\"admin\"> <label for=\"admin\">Amministratore</label><br><input type=\"hidden\" name=\"mode\" value=\"addAdmin\">", $page);
                 echo $page;
+                break;
+            case 'lend':
+            case 'return':
+                ?>
+                <form method="POST" action="mgr.php">
+                    Codice tessera utente: <input type="text" name="utente">
+                    ID Libro: <input type="text" name="id">
+                    <input type="hidden" name="mode" value="<?=$_GET["mode"]?>">
+                    <input type="submit" value="<?=$_GET["mode"]=="lend" ? "Presta titolo" : "Effettua la restituzione"?>">
+                </form>
+                <?php
                 break;
             default:
                 break;

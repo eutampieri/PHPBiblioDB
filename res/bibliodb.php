@@ -16,8 +16,8 @@ function get_http_response_code($domain1)
 
 function dataIT($data)
 {
-	$data = split(" ", $data) [0];
-	$data = split("-", $data);
+	$data = explode(" ", $data) [0];
+	$data = explode("-", $data);
 	return $data[2] . "/" . $data[1] . "/" . $data[0];
 }
 
