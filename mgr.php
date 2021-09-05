@@ -301,7 +301,7 @@ else{
 			$qry="INSERT INTO Iscritti VALUES (:i,:r, :n, :c)";
 			$stmt = $database->prepare($qry);
             $id = uniqid("u");
-			$stmt->bindParam(':i',id);
+			$stmt->bindParam(':i',$id);
 			$stmt->bindParam(':r',$_POST["rfid"]);
 			$stmt->bindParam(':n',$_POST["nome"]);
 			$stmt->bindParam(':c',$_POST["cognome"]);
