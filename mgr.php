@@ -197,7 +197,7 @@ else{
                     </a>
                 </li>
                 <li data-theme="a">
-                    <a href="javascript:void(0);" data-transition="slide">
+                    <a href="?mode=addAdmin" data-transition="slide">
                         Aggiungi utente
                     </a>
                 </li>
@@ -290,6 +290,13 @@ else{
                 $stmt->bindParam(':u',$sess["Utente"]);
 			    $stmt->execute();
             }
+        } else if(isset($_POST["mode"]) && $_POST["mode"] == "addAdmin") {
+			$qry="INSERT INTO Utenti VALUES (:i,:d,:m)";
+			$stmt = $database->prepare($qry);
+			$stmt->bindParam(':i',$_POST["utente"]);
+			$stmt->bindParam(':d',password_hash($_POST["password"], PASSWORD_DEFAULT));
+			$stmt->bindValue(':m',isset($_POST["admin"]) ? "1" : "0");
+			$stmt->execute();
         }
         if(isset($_GET['mode'])){
             switch($_GET['mode']){
@@ -514,6 +521,15 @@ EOF;
                     echo "<tr><td><img class=\"flag\" src=\"api.php?mode=flags&country=".$sessGeoIp["country"]."\"></td><td>".$sessGeoIp["loc"]."</td><td>".date("d/m/y H:i:s",idtoepoch($sessDta["Token"], 4))."</td></tr>\n";
                 }
                 echo "</table>";
+                break;
+            case "addAdmin":
+                $page = file_get_contents("confDep/zero.html");
+                $page = "<style>.progressBar{display: none};</style>" . $page;
+                $page = str_replace("<a", "<!--a", $page);
+                $page = str_replace("migration.php", "mgr.php", $page);
+                $page = str_replace("/a>", "/a-->", $page);
+                $page = str_replace("/p>", "/p><input name=\"admin\" type=\"checkbox\" id=\"admin\"> <label for=\"admin\">Amministratore</label><br><input type=\"hidden\" name=\"mode\" value=\"addAdmin\">", $page);
+                echo $page;
                 break;
             default:
                 break;
