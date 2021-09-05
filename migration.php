@@ -13,7 +13,7 @@ function makeDB(){
 	$qry='CREATE  TABLE "Libri" ("ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
-	$qry='CREATE  TABLE "Copie" ("ID" TEXT, "ISBN" TEXT, "Posizione" TEXT, "Disponibilita" BOOLEAN, "DataPrestito" DATETIME)';
+	$qry='CREATE  TABLE "Copie" ("ID" TEXT, "ISBN" TEXT, "Posizione" TEXT, "Disponibilita" BOOLEAN, "DataPrestito" DATETIME, "UtentePrestito" TEXT)';
 	$stmt = $file_db->prepare($qry);
 	$stmt->execute();
 	$qry='CREATE  TABLE "Utenti" ("Utente" TEXT, "Password" TEXT, "Master" BOOL)';

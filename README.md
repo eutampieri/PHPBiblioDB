@@ -22,6 +22,7 @@ This table contains copies of a book.
 * Posizione (text)
 * Disponibilita (0:in prestito, 1:disponibile)
 * DataPrestito (YYYY-MM-DD)
+* UtentePrestito (text)
 
 ### Utenti
 
