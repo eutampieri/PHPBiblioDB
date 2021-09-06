@@ -10,6 +10,7 @@ include("res/config.php");
 5: Iscritti
 */
 function makeDB(){
+	global $dbUrl;
 	$file_db = new PDO($dbUrl);
 	$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$qry='CREATE  TABLE "Libri" ("ISBN" varchar2(17) primary key, "Titolo" TEXT, "Autore" TEXT)';
@@ -47,6 +48,8 @@ function SQLdate($date){
 if(!is_file("bibliodb.sqlite")||is_file("conf")){
 	if(is_file("conf")&&is_file("bibliodb.sqlite")){
 		copy("bibliodb.sqlite","bibliodb.dbold");
+	} else if (is_file("conf") && !is_file("bibliodb.sqlite")){
+		touch("bibliodb.sqlite");
 	}
 }
 else{

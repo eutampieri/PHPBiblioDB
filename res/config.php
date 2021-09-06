@@ -1,2 +1,2 @@
 <?php
-$dbUrl = $dbUrl;
+$dbUrl = "sqlite:bibliodb.sqlite";
