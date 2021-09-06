@@ -1,4 +1,6 @@
 <?php
+include("res/config.php");
+
 /*Passi:
 0: Si vuole migrare?
 1:Amministratore
@@ -8,7 +10,7 @@
 5: Iscritti
 */
 function makeDB(){
-	$file_db = new PDO('sqlite:bibliodb.sqlite');
+	$file_db = new PDO($dbUrl);
 	$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$qry='CREATE  TABLE "Libri" ("ISBN" TEXT, "Titolo" TEXT, "Autore" TEXT)';
 	$stmt = $file_db->prepare($qry);
@@ -123,7 +125,7 @@ else{
 		}
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="admin"&&$_POST["mig"]=="false"){
 			makeDB();
-			$file_db = new PDO('sqlite:bibliodb.sqlite');
+			$file_db = new PDO($dbUrl);
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$qry="INSERT INTO Utenti VALUES (:i,:d,1)";
 			$stmt = $file_db->prepare($qry);
@@ -135,7 +137,7 @@ else{
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="migMainDb"&&$_POST["mig"]=="true"){
 			makeDB();
 			file_put_contents("conf","");
-			$file_db = new PDO('sqlite:bibliodb.sqlite');
+			$file_db = new PDO($dbUrl);
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			move_uploaded_file($_FILES["db"]["tmp_name"], "bibliodb.json");
 			$db=json_decode(file_get_contents("bibliodb.json"),true);
@@ -172,7 +174,7 @@ else{
 		else if(isset($_POST["stage"])&&$_POST["stage"]=="dbs"&&$_POST["mig"]=="true"){
 			move_uploaded_file($_FILES["users"]["tmp_name"], "bibliodb-utenti.json");
 			move_uploaded_file($_FILES["iscritti"]["tmp_name"], "iscritti.json");
-			$file_db = new PDO('sqlite:bibliodb.sqlite');
+			$file_db = new PDO($dbUrl);
 			$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$key=file_get_contents("key.txt");
 			unlink("key.txt");

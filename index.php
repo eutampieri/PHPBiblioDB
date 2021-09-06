@@ -1,5 +1,7 @@
 <?php
 include("res/bibliodb.php");
+include("res/config.php");
+
 if(!is_file("bibliodb.sqlite")){
 	header("Location: migration.php");
 	die();
@@ -119,7 +121,7 @@ if(!is_file("bibliodb.sqlite")){
 				Scansiona un ISBN
 			</a>
 					<?php
-					$file_db = new PDO('sqlite:bibliodb.sqlite');
+					$file_db = new PDO($dbUrl);
 					$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					if(!isset($_GET['mode'])){
 						$qry='SELECT * FROM Libri, Copie WHERE Libri.ISBN = Copie.ISBN LIMIT 10';

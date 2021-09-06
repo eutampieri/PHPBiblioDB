@@ -1,8 +1,10 @@
 <?php
 include("res/bibliodb.php");
+include("res/config.php");
+
 $DURATA_SESSIONE=860;
 if(isset($_POST['user'])&&isset($_POST['password'])){
-    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database = new PDO($dbUrl);
     $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $qry='SELECT * FROM Utenti WHERE Utente = :u';
     $stmt = $database->prepare($qry);
@@ -40,7 +42,7 @@ if(isset($_POST['user'])&&isset($_POST['password'])){
 }
 $loggedIn=false;
 if(isset($_COOKIE['token'])){
-    $database = new PDO('sqlite:bibliodb.sqlite');
+    $database = new PDO($dbUrl);
     $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $qry='SELECT * FROM Sessioni WHERE Token = :tk';
     $stmt = $database->prepare($qry);
@@ -226,7 +228,7 @@ else{
         </div>
         <div data-role="content">
         <?php
-        $database = new PDO('sqlite:bibliodb.sqlite');
+        $database = new PDO($dbUrl);
         if(isset($_POST['mode'])&&$_POST['mode']=='edit'){
             $id=$_POST['id'];
             $qry = "SELECT ISBN FROM Copie WHERE ID = :id";

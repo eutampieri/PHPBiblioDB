@@ -1,0 +1,2 @@
+<?php
+$dbUrl = $dbUrl;

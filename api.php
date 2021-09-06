@@ -1,6 +1,7 @@
 <?php
 include("res/bibliodb.php");
-$file_db = new PDO('sqlite:bibliodb.sqlite');
+include("res/config.php");
+$file_db = new PDO($dbUrl);
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(isset($_GET["mode"])){
 	switch ($_GET["mode"]){
